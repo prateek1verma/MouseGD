@@ -605,14 +605,12 @@ oneDay_oviposit_stochastic_Patch <- function(){
 
   #fill offspring cube with parents
   for(slice in 1:nGeno){
-
-    private$popAquatic[slice, 1] = sum(rpois(n = nGeno*nGeno,
-                                             lambda = (femBetaS/(private$NetworkPointer$get_beta()) * runif(1, 0.041, 0.329) * # removing mean beta from femBetaS and generating random beta
-                                                                                                                               # assuming a uniform distribution of daily fertility, based on
-                                                                                                                               # 5-10 litters per year and 3-12 pups per litter
-                                                      private$NetworkPointer$get_drivecubeindex(NULL,NULL,slice) *
-                                                      private$NetworkPointer$get_tau(NULL,NULL,slice) )
-                                       )
-  } # end loop over genotypes
-
+      private$popAquatic[slice, 1] = sum(rpois(n = nGeno*nGeno,
+                                               lambda = (femBetaS/(private$NetworkPointer$get_beta())) * runif(1, 0.041, 0.329) * 
+                                               private$NetworkPointer$get_drivecubeindex(NULL,NULL,slice) *
+                                               private$NetworkPointer$get_tau(NULL,NULL,slice)))
+  }
 }
+  
+
+  
