@@ -392,4 +392,4 @@ calcLarvalStageMortalityRate <- function(generationPopGrowthRate, adultMortality
 #'
 calcLarvalPopEquilibrium <- function(alpha, Rm){
   return(as.integer(round(alpha * (Rm-1))))
-}
+  }
