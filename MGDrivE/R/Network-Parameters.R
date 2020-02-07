@@ -9,7 +9,7 @@
 #   Marshall Lab
 #   jared_bennett@berkeley.edu
 #   December 2019
-#
+#   MODIFIED BY: ETHAN A. BROWN (FEB 7 2020)
 ###############################################################################
 
 #' parameterizeMGDrivE
@@ -65,7 +65,8 @@ parameterizeMGDrivE <- function(
   tEgg = 1L,
   tLarva = 14L,
   tPupa = 1L,
-  beta = 32,
+  tAd = 1L,
+  beta = 0.154,
   muAd = 0.123,
   popGrowth = 1.096,
   AdPopEQ,
@@ -92,7 +93,10 @@ parameterizeMGDrivE <- function(
 
   # biological parameters
   pars$timeAq = c("E"=tEgg, "L"=tLarva, "P"=tPupa)
-  pars$beta = beta
+  pars$timeAd = tAd
+  pars$beta = beta # assumes 3-12 pups per litter
+                                                  # assumes female mice have between 5-10 litters per year
+                                                  # sampled from disrete uniform distribution
 
   # initial parameters
   pars$muAd = muAd
@@ -273,12 +277,13 @@ parameterizeMGDrivE <- function(
   pars$thetaAq = c("E"=calcAquaticStageSurvivalProbability(pars$muAq,tEgg),
                    "L"=calcAquaticStageSurvivalProbability(pars$muAq,tLarva),
                    "P"=calcAquaticStageSurvivalProbability(pars$muAq,tPupa))
+  pars$thetaAd = 1-muAd
 
 
   # patch-specific derived parameters
   pars$alpha = calcDensityDependentDeathRate(beta, pars$thetaAq, pars$timeAq,
                                              AdPopEQ, pars$genPopGrowth)
-  pars$Leq = calcLarvalPopEquilibrium(pars$alpha,pars$genPopGrowth)
+  pars$Adeq = calcAdultPopEquilibrium(pars$alpha,pars$genPopGrowth)
 
 
   # check the list
@@ -313,12 +318,12 @@ check <- function(x){
 #' @param adultPopSizeEquilibrium Adult population size at equilibrium, \eqn{Ad_{eq}}
 #' @param populationGrowthRate Population growth in absence of density-dependent mortality \eqn{R_{m}}
 #'
-calcDensityDependentDeathRate <- function(fertility, thetaAq, tAq,
+calcDensityDependentDeathRate <- function(fertility, thetaAq, thetaAd, tAq,
                                           adultPopSizeEquilibrium, populationGrowthRate){
 
-  prodA = (fertility * thetaAq[["E"]] * (adultPopSizeEquilibrium/2)) / (populationGrowthRate-1)
-  prodB_numerator = (1 - (thetaAq[["L"]] / populationGrowthRate))
-  prodB_denominator = (1 - ((thetaAq[["L"]]/populationGrowthRate)^(1/tAq[["L"]])))
+  prodA = (fertility * thetaAq[["E"]] * thetaAq[["L"]] * thetaAq[["P"]] * (adultPopSizeEquilibrium/2)) / (populationGrowthRate-1)
+  prodB_numerator = (1 - (thetaAd / populationGrowthRate))
+  prodB_denominator = (1 - ((thetaAd /populationGrowthRate)^(1/tAd)))
 
   return(prodA*(prodB_numerator/prodB_denominator))
 }
@@ -330,8 +335,8 @@ calcDensityDependentDeathRate <- function(fertility, thetaAq, tAq,
 #' @param stagesDuration Vector of lengths of aquatic stages, \eqn{T_{e}, T_{l}, T_{p}}
 #' @param adultMortality Adult mortality rate, \eqn{\mu_{ad}}
 #'
-calcAverageGenerationTime <- function(stagesDuration, adultMortality){
-  return(sum(stagesDuration) + (1.0 / adultMortality))
+calcAverageGenerationTime <- function(stagesDuration, tAd){
+  return(sum(stagesDuration) + tAd
 }
 
 #' Calculate Generational Population Growth Rate
