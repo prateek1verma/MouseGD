@@ -9,7 +9,7 @@
 #   Marshall Lab
 #   jared_bennett@berkeley.edu
 #   December 2019
-#
+#   MODIFIED BY: ETHAN A. BROWN (FEB 7 2020)
 ###############################################################################
 ###############################################################################
 # Daily Simulation
@@ -81,18 +81,37 @@ oneDay_PopDynamics_Patch <- function(){
 #' where \eqn{\mu_{ad}} corresponds to adult mortality rate and \eqn{\overline{\omega_{m/f}}}
 #' corresponds to genotype-specific male/female mortality effects.
 #'
+
 oneDay_adultDeath_deterministic_Patch <- function(){
 
+  adStart = private$NetworkPointer$get_timeAq(stage = 'E') + private$NetworkPointer$get_timeAq(stage = 'L') + private$NetworkPointer$get_timeAq(stage = 'P') + 1
+  adEnd = adStart = private$NetworkPointer$get_timeAq(stage = 'E') + private$NetworkPointer$get_timeAq(stage = 'L') + private$NetworkPointer$get_timeAq(stage = 'P') + private$NetworkPointer$get_timeAd
+  
+  densityM <- (private$NetworkPointer$get_alpha(ix = private$patchID)/
+                (private$NetworkPointer$get_alpha(ix = private$patchID) + sum(x = private$popMale[,adStart:adEnd])) )^
+             (1/private$NetworkPointer$get_timeAd)
+  
+  lifeM <- densityM*(1-private$NetworkPointer$get_muAd())
+  
   # probability of survival
-  probHolder = (1-private$NetworkPointer$get_muAd()) * private$NetworkPointer$get_omega()
+  probHolderM = (1-private$NetworkPointer$get_muAd()) * private$NetworkPointer$get_omega() * lifeM
 
   # males that live through the day
-  private$popMale[] = private$popMale * probHolder
+  private$popMale[] = private$popMale * probHolderM
 
+  densityF <- (private$NetworkPointer$get_alpha(ix = private$patchID)/
+                 (private$NetworkPointer$get_alpha(ix = private$patchID) + sum(x = private$popFemale[,adStart:adEnd])) )^
+             (1/private$NetworkPointer$get_timeAd)
+  
+  lifeF <- densityF*(1-private$NetworkPointer$get_muAd())
+  
+  # probability of survival
+  probHolderF = (1-private$NetworkPointer$get_muAd()) * private$NetworkPointer$get_omega() * lifeF
+  
   # females that live through the day
   # this works becase female genotypes are rows, and R applies column-wise, thereby
   #  properly applying the vector to each female genotype in order
-  private$popFemale[] = private$popFemale * probHolder
+  private$popFemale[] = private$popFemale * probHolderF
 
 }
 
@@ -103,21 +122,41 @@ oneDay_adultDeath_deterministic_Patch <- function(){
 #' \eqn{\mu_{ad}} corresponds to adult mortality rate and \eqn{\overline{\omega_m/f}}
 #' corresponds to genotype-specific mortality effects.
 #'
+
+
 oneDay_adultDeath_stochastic_Patch <- function(){
 
+  adStart = private$NetworkPointer$get_timeAq(stage = 'E') + private$NetworkPointer$get_timeAq(stage = 'L') + private$NetworkPointer$get_timeAq(stage = 'P') + 1
+  adEnd = adStart = private$NetworkPointer$get_timeAq(stage = 'E') + private$NetworkPointer$get_timeAq(stage = 'L') + private$NetworkPointer$get_timeAq(stage = 'P') + private$NetworkPointer$get_timeAd
+  
+  densityM <- (private$NetworkPointer$get_alpha(ix = private$patchID)/
+                 (private$NetworkPointer$get_alpha(ix = private$patchID) + sum(x = private$popMale[,adStart:adEnd])) )^
+    (1/private$NetworkPointer$get_timeAd)
+  
+  lifeM <- densityM*(1-private$NetworkPointer$get_muAd())
+  
   # probability of survival
-  probHolder = (1-private$NetworkPointer$get_muAd()) * private$NetworkPointer$get_omega()
+  probHolderM = (1-private$NetworkPointer$get_muAd()) * private$NetworkPointer$get_omega() * lifeM
 
   # males that live through the day
   private$popMale[] <- rbinom(n = private$NetworkPointer$get_genotypesN(),
                               size = private$popMale,
-                              prob = probHolder)
+                              prob = probHolderM)
 
+  densityF <- (private$NetworkPointer$get_alpha(ix = private$patchID)/
+                 (private$NetworkPointer$get_alpha(ix = private$patchID) + sum(x = private$popFemale[,adStart:adEnd])) )^
+    (1/private$NetworkPointer$get_timeAd)
+  
+  lifeF <- densityF*(1-private$NetworkPointer$get_muAd())
+  
+  # probability of survival
+  probHolderF = (1-private$NetworkPointer$get_muAd()) * private$NetworkPointer$get_omega() * lifeF
+  
   # females that live through the day
   # this also works because of how R applies things and fills matrices
   private$popFemale[] = rbinom(n = (private$NetworkPointer$get_genotypesN())^2,
                                size = private$popFemale,
-                               prob = probHolder)
+                               prob = probHolderF)
 
 }
 
@@ -201,18 +240,12 @@ oneDay_pupaDM_stochastic_Patch <- function(){
 #'
 oneDay_larvaDM_deterministic_Patch <- function(){
 
-  # things to reuse
-  larvaStart <- private$NetworkPointer$get_timeAq(stage = 'E') + 1
-  larvaEnd <- private$NetworkPointer$get_timeAq(stage = 'E') + private$NetworkPointer$get_timeAq(stage = 'L')
-
   # calculate density dependence
   # (alpha/(alpha + L))^(1/t_l)
-  density <- (private$NetworkPointer$get_alpha(ix = private$patchID)/
-                (private$NetworkPointer$get_alpha(ix = private$patchID) + sum(x = private$popAquatic[,larvaStart:larvaEnd])) )^
-             (1/private$NetworkPointer$get_timeAq(stage = 'L'))
+  
 
   # total life rate
-  life <- density*(1-private$NetworkPointer$get_muAq())
+  life <- 1-private$NetworkPointer$get_muAq()
 
   # run loop backwards to move populations as we go
   for(i in larvaEnd:larvaStart){
@@ -238,12 +271,9 @@ oneDay_larvaDM_stochastic_Patch <- function(){
 
   # calculate density dependence
   # (alpha/(alpha + L))^(1/t_l)
-  density <- (private$NetworkPointer$get_alpha(ix = private$patchID)/
-                (private$NetworkPointer$get_alpha(ix = private$patchID) + sum(x = private$popAquatic[,larvaStart:larvaEnd])) )^
-    (1/private$NetworkPointer$get_timeAq(stage = 'L'))
-
+  
   # total life rate
-  life <- density*(1-private$NetworkPointer$get_muAq())
+  life <- (1-private$NetworkPointer$get_muAq())
 
   # run loop backwards to move populations as we go
   for(i in larvaEnd:larvaStart){
@@ -577,7 +607,9 @@ oneDay_oviposit_stochastic_Patch <- function(){
   for(slice in 1:nGeno){
 
     private$popAquatic[slice, 1] = sum(rpois(n = nGeno*nGeno,
-                                             lambda = femBetaS *
+                                             lambda = (femBetaS/(private$NetworkPointer$get_beta()) * runif(1, 0.041, 0.329) * # removing mean beta from femBetaS and generating random beta
+                                                                                                                               # assuming a uniform distribution of daily fertility, based on
+                                                                                                                               # 5-10 litters per year and 3-12 pups per litter
                                                       private$NetworkPointer$get_drivecubeindex(NULL,NULL,slice) *
                                                       private$NetworkPointer$get_tau(NULL,NULL,slice) )
                                        )
