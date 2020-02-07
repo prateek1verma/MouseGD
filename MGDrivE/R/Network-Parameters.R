@@ -336,7 +336,7 @@ calcDensityDependentDeathRate <- function(fertility, thetaAq, thetaAd, tAq,
 #' @param adultMortality Adult mortality rate, \eqn{\mu_{ad}}
 #'
 calcAverageGenerationTime <- function(stagesDuration, tAd){
-  return(sum(stagesDuration) + tAd
+  return(sum(stagesDuration,tAd))
 }
 
 #' Calculate Generational Population Growth Rate
