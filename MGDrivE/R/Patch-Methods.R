@@ -9,7 +9,7 @@
 #   Marshall Lab
 #   jared_bennett@berkeley.edu
 #   December 2019
-#
+#   MODIFIED BY: ETHAN A. BROWN (FEB 7 2020)
 ###############################################################################
 
 #' Calculate Distribution of Larval Population
@@ -108,14 +108,15 @@ calcLarvalDist <- function(mu, t){
 set_initialPopulation_Patch <- function(adultEQ = adultEQ, larvalEQ = larvalEQ,
                                         adultRatioF = adultRatioF, adultRatioM = adultRatioM,
                                         larvalRatio = larvalRatio,
-                                        timeAq = timeAq, muAq = muAq, alpha = alpha){
+                                        timeAq = timeAq, muAq = muAq, muAd = muAd, alpha = alpha){
 
   # reuse these
   # epLife is the chance of not dying for eggs and pupa
   #  There is no density dependence in this one
   # lLife includes the density dependence for larvae
   epLife <- 1 - muAq
-  lLife <- (alpha/(alpha + larvalEQ))^(1/timeAq[['L']]) * epLife
+  lLife <- epLife
+  # (alpha/(alpha + larvalEQ))^(1/timeAq[['L']]) * epLife
 
 
   ##########
@@ -144,18 +145,21 @@ set_initialPopulation_Patch <- function(adultEQ = adultEQ, larvalEQ = larvalEQ,
       private$popAquatic[ ,i+1] = private$popAquatic[ ,i] * epLife
     } # end pupa loop
   }
+  
+  adLife = 1-muAd # assuming 1-muAd is daily propability of adult survival
+  AdDD = (alpha/(alpha + adultEQ))^(1/timeAd) * adLife
 
   ##########
   # set male population breakdown
   ##########
-  private$popMale[names(adultRatioM)] = adultRatioM * adultEQ/2
+  private$popMale[names(adultRatioM)] = adultRatioM * adultEQ/2 * AdDD
 
   ##########
   # set mated female population breakdown
   ##########
   # this isn't exactly correct, it mates all males to all females, ignoring
   #  the genotype-specific male mating abilities
-  private$popUnmated[names(adultRatioF)] = adultRatioF * adultEQ/2
+  private$popUnmated[names(adultRatioF)] = adultRatioF * adultEQ/2 * AdDD
   private$popFemale = private$popUnmated %o% normalise(private$popMale)
   private$popUnmated[] = 0
 
@@ -178,12 +182,12 @@ set_initialPopulation_Patch <- function(adultEQ = adultEQ, larvalEQ = larvalEQ,
 set_population_deterministic_Patch <- function(adultEQ = adultEQ, larvalEQ = larvalEQ,
                                          adultRatioF = adultRatioF, adultRatioM = adultRatioM,
                                          larvalRatio = larvalRatio,
-                                         timeAq = timeAq, muAq = muAq, alpha = alpha){
+                                         timeAq = timeAq, muAq = muAq, muAd = muAd, alpha = alpha){
 
   self$initialPopulation(adultEQ = adultEQ, larvalEQ = larvalEQ,
                          adultRatioF = adultRatioF, adultRatioM = adultRatioM,
                          larvalRatio = larvalRatio,
-                         timeAq = timeAq, muAq = muAq, alpha = alpha)
+                         timeAq = timeAq, muAq = muAq, muAd = muAd, alpha = alpha)
 
 }
 
@@ -204,13 +208,13 @@ set_population_deterministic_Patch <- function(adultEQ = adultEQ, larvalEQ = lar
 set_population_stochastic_Patch <- function(adultEQ = adultEQ, larvalEQ = larvalEQ,
                                            adultRatioF = adultRatioF, adultRatioM = adultRatioM,
                                            larvalRatio = larvalRatio,
-                                           timeAq = timeAq, muAq = muAq, alpha = alpha){
+                                           timeAq = timeAq, muAq = muAq, muAd = muAd, alpha = alpha){
 
   # set initial population
   self$initialPopulation(adultEQ = adultEQ, larvalEQ = larvalEQ,
                          adultRatioF = adultRatioF, adultRatioM = adultRatioM,
                          larvalRatio = larvalRatio,
-                         timeAq = timeAq, muAq = muAq, alpha = alpha)
+                         timeAq = timeAq, muAq = muAq, muAd = muAd, alpha = alpha)
 
   ##########
   # make everything an integer
