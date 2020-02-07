@@ -9,7 +9,7 @@
 #   Marshall Lab
 #   jared_bennett@berkeley.edu
 #   December 2019
-#
+#   MODIFIED BY: ETHAN A. BROWN (FEB 7 2020)
 ###############################################################################
 ###############################################################################
 # Class Definition
@@ -278,6 +278,16 @@ get_muAd_Network <- function(){return(private$parameters$muAd)}
 
 Network$set(which = "public",name = "get_muAd",
   value = get_muAd_Network,overwrite = TRUE
+)
+
+#' Get tAd
+#'
+#' Return time of the adult life stage
+#'
+get_tAd_Network <- function(){return(private$parameters$tAd)}
+
+Network$set(which = "public",name = "get_tAd",
+            value = get_tAd_Network,overwrite = TRUE
 )
 
 #' Get muAq
