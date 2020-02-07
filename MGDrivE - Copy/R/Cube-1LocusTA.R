@@ -7,7 +7,7 @@
 #
 #   MGDrivE: Mosquito Gene Drive Explorer
 #   1-locus UDmel
-#   HÃ©ctor Sanchez, Jared Bennett, Sean Wu, John Marshall
+#   Héctor Sanchez, Jared Bennett, Sean Wu, John Marshall
 #   jared_bennett@berkeley.edu
 #   August 2017
 #
@@ -117,4 +117,3 @@ cubeOneLocusTA <- function(TAEfficacy = 1.0, TBEfficacy = 1.0,
     releaseType = "AB"
   ))
 }
-
