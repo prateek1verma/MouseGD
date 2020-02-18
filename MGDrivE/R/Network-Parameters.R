@@ -33,6 +33,7 @@
 #' @param tEgg Length of egg stage
 #' @param tLarva Length of larval instar stage
 #' @param tPupa Length of pupal stage
+#' @param tAd Length of adult stage
 #' @param beta Female egg batch size of wild-type
 #' @param muAd Wild-type daily adult mortality (1/muAd is average wild-type lifespan)
 #' @param popGrowth Daily population growth rate (used to calculate equilibrium)
@@ -62,13 +63,13 @@ parameterizeMGDrivE <- function(
   simTime,
   sampTime = 1L,
   moveVar = 1000L,
-  tEgg = 1L,
-  tLarva = 14L,
-  tPupa = 1L,
-  tAd = 1L,
+  tEgg = 19L,
+  tLarva = 23L,
+  tPupa = 37L,
+  tAd = 690L,
   beta = 0.154,
-  muAd = 0.123,
-  popGrowth = 1.096,
+  muAd = 0.0013,
+  popGrowth = 1.003,
   AdPopEQ,
   LarPopRatio,
   AdPopRatio_F,
@@ -271,7 +272,7 @@ parameterizeMGDrivE <- function(
 
 
   # derived parameters
-  pars$g = calcAverageGenerationTime(pars$timeAq,muAd)
+  pars$g = calcAverageGenerationTime(pars$timeAq,tAd)
   pars$genPopGrowth = calcPopulationGrowthRate(popGrowth,pars$g)
   pars$muAq = calcLarvalStageMortalityRate(pars$genPopGrowth,muAd,beta,pars$timeAq)
   pars$thetaAq = c("E"=calcAquaticStageSurvivalProbability(pars$muAq,tEgg),
@@ -314,11 +315,12 @@ check <- function(x){
 #'
 #' @param fertility Number of eggs per oviposition for wild-type females, \eqn{\beta}
 #' @param thetaAq Vector of density-independent survival probabilities of aquatic stages, \eqn{\theta_{e}, \theta_{l}}
-#' @param tAq Vector of lengths of aquatic stages, \eqn{T_{e}, T_{l}, T_{p}}
+#' @param thetaAd Vector of density-independent survival probabilities of adult stage, \eqn{\theta_{a}
+#' @param tAd Vector of lengths of aquatic stages, \eqn{T_{a}}
 #' @param adultPopSizeEquilibrium Adult population size at equilibrium, \eqn{Ad_{eq}}
 #' @param populationGrowthRate Population growth in absence of density-dependent mortality \eqn{R_{m}}
 #'
-calcDensityDependentDeathRate <- function(fertility, thetaAq, thetaAd, tAq,
+calcDensityDependentDeathRate <- function(fertility, thetaAq, thetaAd, tAd,
                                           adultPopSizeEquilibrium, populationGrowthRate){
 
   prodA = (fertility * thetaAq[["E"]] * thetaAq[["L"]] * thetaAq[["P"]] * (adultPopSizeEquilibrium/2)) / (populationGrowthRate-1)
@@ -333,10 +335,10 @@ calcDensityDependentDeathRate <- function(fertility, thetaAq, thetaAd, tAq,
 #' Calculate \eqn{g}, average generation time, given by: \deqn{g=T_e+T_l+T_p+\frac{1}{\mu_{ad}}}
 #'
 #' @param stagesDuration Vector of lengths of aquatic stages, \eqn{T_{e}, T_{l}, T_{p}}
-#' @param adultMortality Adult mortality rate, \eqn{\mu_{ad}}
+#' @param tAd Vector of lengths of aquatic stages, \eqn{T_{a}}
 #'
 calcAverageGenerationTime <- function(stagesDuration, tAd){
-  return(sum(stagesDuration,tAd))
+  return(sum(c(stagesDuration,tAd)))
 }
 
 #' Calculate Generational Population Growth Rate
@@ -390,6 +392,6 @@ calcLarvalStageMortalityRate <- function(generationPopGrowthRate, adultMortality
 #' @param alpha See \code{\link{calcDensityDependentDeathRate}}
 #' @param Rm See \code{\link{calcPopulationGrowthRate}}
 #'
-calcLarvalPopEquilibrium <- function(alpha, Rm){
+calcAdultPopEquilibrium <- function(alpha, Rm){
   return(as.integer(round(alpha * (Rm-1))))
   }

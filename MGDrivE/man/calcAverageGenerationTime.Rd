@@ -4,12 +4,12 @@
 \alias{calcAverageGenerationTime}
 \title{Calculate Average Generation Time}
 \usage{
-calcAverageGenerationTime(stagesDuration, adultMortality)
+calcAverageGenerationTime(stagesDuration, tAd)
 }
 \arguments{
 \item{stagesDuration}{Vector of lengths of aquatic stages, \eqn{T_{e}, T_{l}, T_{p}}}
 
-\item{adultMortality}{Adult mortality rate, \eqn{\mu_{ad}}}
+\item{tAd}{Vector of lengths of aquatic stages, \eqn{T_{a}}}
 }
 \description{
 Calculate \eqn{g}, average generation time, given by: \deqn{g=T_e+T_l+T_p+\frac{1}{\mu_{ad}}}

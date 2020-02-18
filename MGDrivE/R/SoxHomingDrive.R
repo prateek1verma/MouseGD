@@ -1,45 +1,83 @@
+###############################################################################
+#      ______      __
+#     / ____/_  __/ /_  ___
+#    / /   / / / / __ \/ _ \
+#   / /___/ /_/ / /_/ /  __/
+#   \____/\__,_/_.___/\___/
+#
+#   MGDrivE: Mosquito Gene Drive Explorer
+#   CRISPR 2 Resistance Alleles Inheritance Cube - Sex-Specific homing
+#   Héctor Sanchez, Jared Bennett, Sean Wu, John Marshall
+#   July 2017
+#   jared_bennett@berkeley.edu
+#   December 2018
+#    Modified to reflect new cutting, homing, resistance generation rates
+#
+###############################################################################
+
+#' Inheritance Cube: CRISPR (Clustered Regularly Interspaced Short Palindromic Repeats) with 2 Resistance Alleles and sex-specific genotypes
+#'
+#' This is a sex-specific version of the original cube \code{\link{cubeHomingDrive}}. It assumes that the construct
+#' is on an autosome and there can be different male/female homing rates. It also has
+#'
+#' @param cM Male homing rate
+#' @param cF Female homing rate
+#' @param chF Female correct homing rate
+#' @param crF Female resistance generating rate
+#' @param chM Male correct homing rate
+#' @param crM Male resistance generating rate
+#' @param eta Genotype-specific mating fitness
+#' @param phi Genotype-specific sex ratio at emergence
+#' @param omega Genotype-specific multiplicative modifier of adult mortality
+#' @param xiF Genotype-specific female pupatory success
+#' @param xiM Genotype-specific male pupatory success
+#' @param s Genotype-specific fractional reduction(increase) in fertility
+#'
+#' @return Named list containing the inheritance cube, transition matrix, genotypes, wild-type allele,
+#' and all genotype-specific parameters.
+#' @export
 
 SoxHomingDrive <- function(cM = 1.0, cF = 1.0, chM = 0, crM = 0, chF = 0,
                             crF = 0, eta = NULL, phi = NULL,
                             omega = NULL, xiF = NULL, xiM = NULL, s = NULL){
-  
+
   ## safety cWecks in case someone is dumb
   if(any(c(cM, cF, chM, crM, chF, crF)>1) || any(c(cM, cF,chM, crM, chF, crF)<0)){
     stop("Parameters are rates, they must be between 0 and 1.")
   }
-  
-  
+
+
   ## define matrices
   ## Matrix Dimensions Key: [femaleGenotype,maleGenotype,offspringGenotype]
   gtype <- c('mWW', 'mWH', 'mWR', 'mWB', 'mHH', 'mHR', 'mHB', 'mRR', 'mRB', 'mBB',
             'fWW', 'fWH', 'fWR', 'fWB', 'fHH', 'fHR', 'fHB', 'fRR', 'fRB', 'fBB')
- 
-  
+
+
   size <- length(gtype)
-  
+
   tMatrix <- array(data=0, dim=c(size, size, size), dimnames=list(gtype, gtype, gtype)) #transition matrix
-  
+
   ## fill tMatrix with probabilities
   #('WW', 'WH', 'WR', 'WB', 'HH', 'HR', 'HB', 'RR', 'RB', 'BB')
 
   tMatrix['fWW','mWW', c('fWW','mWW')] <- 1/2
-  
+
   tMatrix['fWR','mWW', c('fWW', 'fWR','mWW', 'mWR')] <- c( 1, 1)/4
   tMatrix['fWR','mWR', c('fWW', 'fWR', 'fRR','mWW', 'mWR', 'mRR')] <- c( 1/2, 1, 1/2)/4
-  
+
   tMatrix['fWB','mWW', c('fWW', 'fWB','mWW', 'mWB')] <- c( 1, 1)/4
   tMatrix['fWB','mWR', c('fWW', 'fWR', 'fWB', 'fRB','mWW', 'mWR', 'mWB', 'mRB')] <- c( 1, 1, 1, 1)/8
   tMatrix['fWB','mWB', c('fWW', 'fWB', 'fBB','mWW', 'mWB', 'mBB')] <- c( 1/2, 1, 1/2)/4
-  
+
   tMatrix['fHH','mHH', c('fHH','mHH')] <- 1/2
-  
+
   tMatrix['fHR','mHH', c('fHH', 'fHR','mHH', 'mHR')] <- c( 1, 1)/4
   tMatrix['fHR','mHR', c('fHH', 'fHR', 'fRR','mHH', 'mHR', 'mRR')] <- c( 1/2, 1, 1/2)/4
-  
+
   tMatrix['fHB','mHH', c('fHH', 'fHB','mHH', 'mHB')] <- c( 1, 1)/4
   tMatrix['fHB','mHR', c('fHH', 'fHR', 'fHB', 'fRB','mHH', 'mHR', 'mHB', 'mRB')] <- c( 1, 1, 1, 1)/8
   tMatrix['fHB','mHB', c('fHH', 'fHB', 'fBB','mHH', 'mHB', 'mBB')] <- c( 1/2, 1, 1/2)/4
-  
+
   tMatrix['fRR','mWW', c('fWR','mWR')] <- 1/2
   tMatrix['fRR','mWR', c('fWR', 'fRR','mWR', 'mRR')] <- c( 1, 1)/4
   tMatrix['fRR','mWB', c('fWR', 'fRB','mWR', 'mRB')] <- c( 1, 1)/4
@@ -47,7 +85,7 @@ SoxHomingDrive <- function(cM = 1.0, cF = 1.0, chM = 0, crM = 0, chF = 0,
   tMatrix['fRR','mHR', c('fHR', 'fRR','mHR', 'mRR')] <- c( 1, 1)/4
   tMatrix['fRR','mHB', c('fHR', 'fRB','mHR', 'mRB')] <- c( 1, 1)/4
   tMatrix['fRR','mRR', c('fRR','mRR')] <- 1/2
-  
+
   tMatrix['fRB','mWW', c('fWR', 'fWB','mWR', 'mWB')] <- c( 1, 1)/4
   tMatrix['fRB','mWR', c('fWR', 'fWB', 'fRR', 'fRB','mWR', 'mWB', 'mRR', 'mRB')] <- c( 1, 1, 1, 1)/8
   tMatrix['fRB','mWB', c('fWR', 'fWB', 'fRB', 'fBB','mWR', 'mWB', 'mRB', 'mBB')] <- c( 1, 1, 1, 1)/8
@@ -56,7 +94,7 @@ SoxHomingDrive <- function(cM = 1.0, cF = 1.0, chM = 0, crM = 0, chF = 0,
   tMatrix['fRB','mHB', c('mHR', 'mHB', 'mRB', 'mBB','fHR', 'fHB', 'fRB', 'fBB')] <- c( 1, 1, 1, 1)/8
   tMatrix['fRB','mRR', c('fRR', 'fRB','mRR', 'mRB')] <- c( 1, 1)/4
   tMatrix['fRB','mRB', c('fRR', 'fRB', 'fBB','mRR', 'mRB', 'mBB')] <- c( 1/2, 1, 1/2)/4
-  
+
   tMatrix['fBB','mWW', c('fWB','mWB')] <- 1/2
   tMatrix['fBB','mWR', c('fWB', 'fRB','mWB', 'mRB')] <- c( 1, 1)/4
   tMatrix['fBB','mWB', c('fWB', 'fBB','mWB', 'mBB')] <- c( 1, 1)/4
@@ -66,26 +104,26 @@ SoxHomingDrive <- function(cM = 1.0, cF = 1.0, chM = 0, crM = 0, chF = 0,
   tMatrix['fBB','mRR', c('fRB','mRB')] <- 1/2
   tMatrix['fBB','mRB', c('fRB', 'fBB','mRB', 'mBB')] <- c( 1, 1)/4
   tMatrix['fBB','mBB', c('fBB','mBB')] <- 1/2
-  
+
   #####
-  
+
   tMatrix['fWW','mWR', c('fWW', 'fWR','mWW', 'mWR')] <- c( 1, 1)/4
-  
+
   tMatrix['fWW','mWB', c('fWW', 'fWB','mWW', 'mWB')] <- c( 1, 1)/4
   tMatrix['fWR','mWB', c('fWW', 'fWR', 'fWB', 'fRB','mWW', 'mWR', 'mWB', 'mRB')] <- c( 1, 1, 1, 1)/8
-  
+
   tMatrix['fHH','mHR', c('fHH', 'fHR','mHH', 'mHR')] <- c( 1, 1)/4
-  
+
   tMatrix['fHH','mHB', c('fHH', 'fHB','mHH', 'mHB')] <- c( 1, 1)/4
   tMatrix['fHR','mHB', c('fHH', 'fHR', 'fHB', 'fRB','mHH', 'mHR', 'mHB', 'mRB')] <- c( 1, 1, 1, 1)/8
-  
+
   tMatrix['fWW','mRR', c('fWR','mWR')] <- 1/2
   tMatrix['fWR','mRR', c('fWR', 'fRR','mWR', 'mRR')] <- c( 1, 1)/4
   tMatrix['fWB','mRR', c('fWR', 'fRB','mWR', 'mRB')] <- c( 1, 1)/4
   tMatrix['fHH','mRR', c('fHR','mHR')] <- 1/2
   tMatrix['fHR','mRR', c('fHR', 'fRR','mHR', 'mRR')] <- c( 1, 1)/4
   tMatrix['fHB','mRR', c('fHR', 'fRB','mHR', 'mRB')] <- c( 1, 1)/4
-  
+
   tMatrix['fWW','mRB', c('fWR', 'fWB','mWR', 'mWB')] <- c( 1, 1)/4
   tMatrix['fWR','mRB', c('fWR', 'fWB', 'fRR', 'fRB','mWR', 'mWB', 'mRR', 'mRB')] <- c( 1, 1, 1, 1)/8
   tMatrix['fWB','mRB', c('fWR', 'fWB', 'fRB', 'fBB','mWR', 'mWB', 'mRB', 'mBB')] <- c( 1, 1, 1, 1)/8
@@ -93,7 +131,7 @@ SoxHomingDrive <- function(cM = 1.0, cF = 1.0, chM = 0, crM = 0, chF = 0,
   tMatrix['fHR','mRB', c('fHR', 'fHB', 'fRR', 'fRB','mHR', 'mHB', 'mRR', 'mRB')] <- c( 1, 1, 1, 1)/8
   tMatrix['fHB','mRB', c('mHR', 'mHB', 'mRB', 'mBB','fHR', 'fHB', 'fRB', 'fBB')] <- c( 1, 1, 1, 1)/8
   tMatrix['fRR','mRB', c('fRR', 'fRB','mRR', 'mRB')] <- c( 1, 1)/4
-  
+
   tMatrix['fWW','mBB', c('fWB','mWB')] <- 1/2
   tMatrix['fWR','mBB', c('fWB', 'fRB','mWB', 'mRB')] <- c( 1, 1)/4
   tMatrix['fWB','mBB', c('fWB', 'fBB','mWB', 'mBB')] <- c( 1, 1)/4
@@ -102,41 +140,41 @@ SoxHomingDrive <- function(cM = 1.0, cF = 1.0, chM = 0, crM = 0, chF = 0,
   tMatrix['fHB','mBB', c('fHB', 'fBB','mHB', 'mBB')] <- c( 1, 1)/4
   tMatrix['fRR','mBB', c('fRB','mRB')] <- 1/2
   tMatrix['fRB','mBB', c('fRB', 'fBB','mRB', 'mBB')] <- c( 1, 1)/4
-  
+
   ## set the other half of the matrix that is symmetric
   # Boolean matrix for subsetting, used several times
   boolMat <- upper.tri(x = tMatrix[ , ,1], diag = FALSE)
   # loop over depth, set upper triangle
   for(z in 1:size){tMatrix[ , ,z][boolMat] <- t(tMatrix[ , ,z])[boolMat]}
-  
+
   #####
-  
+
   tMatrix['fWW','mHH', c('fWH','mWH')] <- 1/2
   tMatrix['fWR','mHH', c('fWH', 'fHR','mWH', 'mHR')] <- c( 1, 1)/4
   tMatrix['fWB','mHH', c('fWH', 'fHB','mWH', 'mHB')] <- c( 1, 1)/4
-  
+
   tMatrix['fWW','mHR', c('fWH', 'fWR','mWH', 'mWR')] <- c( 1, 1)/4
   tMatrix['fWR','mHR', c('fWH', 'fWR', 'fHR', 'fRR','mWH', 'mWR', 'mHR', 'mRR')] <- c( 1, 1, 1, 1)/8
   tMatrix['fWB','mHR', c('fWH', 'fWR', 'fHB', 'fRB','mWH', 'mWR', 'mHB', 'mRB')] <- c( 1, 1, 1, 1)/8
-  
+
   tMatrix['fWW','mHB', c('fWH', 'fWB','mWH', 'mWB')] <- c( 1, 1)/4
   tMatrix['fWR','mHB', c('fWH', 'fWB', 'fHR', 'fRB','mWH', 'mWB', 'mHR', 'mRB')] <- c( 1, 1, 1, 1)/8
   tMatrix['fWB','mHB', c('fWH', 'fWB', 'fHB', 'fBB','mWH', 'mWB', 'mHB', 'mBB')] <- c( 1, 1, 1, 1)/8
-  
-  
+
+
   tMatrix['fHH','mWW', c('fWH','mWH')] <- 1/2
   tMatrix['fHH','mWR', c('fWH', 'fHR','mWH', 'mHR')] <- c( 1, 1)/4
   tMatrix['fHH','mWB', c('fWH', 'fHB','mWH', 'mHB')] <- c( 1, 1)/4
-  
+
   tMatrix['fHR','mWW', c('fWH', 'fWR','mWH', 'mWR')] <- c( 1, 1)/4
   tMatrix['fHR','mWR', c('fWH', 'fWR', 'fHR', 'fRR','mWH', 'mWR', 'mHR', 'mRR')] <- c( 1, 1, 1, 1)/8
   tMatrix['fHR','mWB', c('fWH', 'fWR', 'fHB', 'fRB','mWH', 'mWR', 'mHB', 'mRB')] <- c( 1, 1, 1, 1)/8
-  
+
   tMatrix['fHB','mWW', c('fWH', 'fWB','mWH', 'mWB')] <- c( 1, 1)/4
   tMatrix['fHB','mWR', c('fWH', 'fWB', 'fHR', 'fRB','mWH', 'mWB', 'mHR', 'mRB')] <- c( 1, 1, 1, 1)/8
   tMatrix['fHB','mWB', c('fWH', 'fWB', 'fHB', 'fBB','mWH', 'mWB', 'mHB', 'mBB')] <- c( 1, 1, 1, 1)/8
-  
-  
+
+
   # hetrozygous homing
   tMatrix['fWW','mWH', c('fWW', 'fWH', 'fWR', 'fWB','mWW', 'mWH', 'mWR', 'mWB')] <- c(1-cM, 1+cM*chM, cM*(1-chM)*crM, cM*(1-chM)*(1-crM))/4
   tMatrix['fWR','mWH', c('fWW', 'fWH', 'fWR', 'fWB',
@@ -205,18 +243,18 @@ SoxHomingDrive <- function(cM = 1.0, cF = 1.0, chM = 0, crM = 0, chF = 0,
                          'mWB', 'mHB', 'mBB')] <- c(1-cF, 1+cF*chF, cF*(1-chF)*crF, cF*(1-chF)*(1-crF) + cF*(1-chF)*crF,
                                                     1-cF, 1+cF*chF, cF*(1-chF)*(1-crF))/8
   tMatrix['fWH','mBB', c('fWB', 'fHB', 'fRB', 'fBB','mWB', 'mHB', 'mRB', 'mBB')] <- c(1-cF, 1+cF*chF, cF*(1-chF)*crF, cF*(1-chF)*(1-crF))/4
-  
-  
-  
+
+
+
   #protection from underflow errors
   tMatrix[tMatrix < .Machine$double.eps] <- 0
-  
+
   ## initialize viability mask. No mother/father-specific death, so use basic mask
-  
+
   viabilityMask <- array(data = 1L, dim = c(size,size,size), dimnames = list(gtype, gtype, gtype))
-  
+
   modifiers = cubeModifiers(gtype, eta = eta, phi = phi, omega = omega, xiF = xiF, xiM = xiM, s = s)
-  
+
   ## put everytWing into a labeled list to return
   return(list(
     ih = tMatrix,
@@ -232,17 +270,16 @@ SoxHomingDrive <- function(cM = 1.0, cF = 1.0, chM = 0, crM = 0, chF = 0,
     s = modifiers$s,
     releaseType = "mHH"
   ))
-  
-  
+
+
 }
 
 
 
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+

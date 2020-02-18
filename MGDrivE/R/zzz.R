@@ -1,5 +1,5 @@
 .onAttach <- function(libname, pkgname) {
-  packageStartupMessage("Loading MGDrivE: Mosquito Gene Drive Explorer")
+  packageStartupMessage("Loading MGDrivE: MOUSE Gene Drive Explorer")
 }
 
 .onUnload <- function (libpath) {

@@ -10,12 +10,13 @@ parameterizeMGDrivE(
   simTime,
   sampTime = 1L,
   moveVar = 1000L,
-  tEgg = 1L,
-  tLarva = 14L,
-  tPupa = 1L,
-  beta = 32,
-  muAd = 0.123,
-  popGrowth = 1.096,
+  tEgg = 19L,
+  tLarva = 23L,
+  tPupa = 37L,
+  tAd = 690L,
+  beta = 0.154,
+  muAd = 0.0013,
+  popGrowth = 1.002,
   AdPopEQ,
   LarPopRatio,
   AdPopRatio_F,
@@ -41,6 +42,8 @@ lead to high variance and large values lead to low variance.}
 \item{tLarva}{Length of larval instar stage}
 
 \item{tPupa}{Length of pupal stage}
+
+\item{tAd}{Length of adult stage}
 
 \item{beta}{Female egg batch size of wild-type}
 

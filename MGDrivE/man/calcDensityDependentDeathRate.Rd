@@ -7,6 +7,7 @@
 calcDensityDependentDeathRate(
   fertility,
   thetaAq,
+  thetaAd,
   tAq,
   adultPopSizeEquilibrium,
   populationGrowthRate
@@ -17,11 +18,11 @@ calcDensityDependentDeathRate(
 
 \item{thetaAq}{Vector of density-independent survival probabilities of aquatic stages, \eqn{\theta_{e}, \theta_{l}}}
 
-\item{tAq}{Vector of lengths of aquatic stages, \eqn{T_{e}, T_{l}, T_{p}}}
-
 \item{adultPopSizeEquilibrium}{Adult population size at equilibrium, \eqn{Ad_{eq}}}
 
 \item{populationGrowthRate}{Population growth in absence of density-dependent mortality \eqn{R_{m}}}
+
+\item{tAd}{Vector of lengths of aquatic stages, \eqn{T_{a}}}
 }
 \description{
 Calculate \eqn{\alpha}, the strength of density-dependent mortality during the

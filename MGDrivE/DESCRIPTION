@@ -1,22 +1,19 @@
 Package: MGDrivE
 Type: Package
-Title: Mosquito Gene Drive Explorer
+Title: Mouse Gene Drive Explorer
 Version: 1.5.0
 Authors@R: c(
     person("Héctor Manuel", "Sánchez Castellanos", email = "sanchez.hmsc@berkeley.edu", role = c("aut","cre")),
     person("Jared", "Bennett", email = "jared_bennett@berkeley.edu ", role = "aut"),
     person("Sean", "Wu", email = "slwu89@berkeley.edu", role = "aut"),
-    person("John M.", "Marshall", email = "john.marshall@berkeley.edu", role = "aut")
+    person("John M.", "Marshall", email = "john.marshall@berkeley.edu", role = "aut"),
+    person("Ethan A.", "Brown", email = "browne40@wwu.edu", role = "modifier")
     )
-Maintainer: Héctor Manuel Sánchez Castellanos <sanchez.hmsc@berkeley.edu>
-URL: https://marshalllab.github.io/MGDrivE/, https://www.marshalllab.com/
-BugReports: https://github.com/MarshallLab/MGDrivE/issues
-Description: Provides a model designed to be a reliable testbed where various gene 
-    drive interventions for mosquito-borne diseases control. It is being developed to 
-    accommodate the use of various mosquito-specific gene drive systems within a 
-    population dynamics framework that allows migration of individuals between patches 
-    in landscape. Previous work developing the population dynamics can be found in Deredec et al. 
-    (2001) <doi:10.1073/pnas.1110717108> and Hancock & Godfray (2007) <doi:10.1186/1475-2875-6-98>, 
+Maintainer: Ethan Alexander Brown <browne40@wwu.edu>
+URL: https://github.com/eabrown2378/MGDrivE 
+Description: A modification of the package "MGDrivE" (Sanchez et al. 2019 - doi:10.1111/2041-210X.13318). 
+    Adapts equations from Github:MarshallLab/MGDrivE/docs;as well as from; Deredec et al. 
+    (2001) doi:10.1073/pnas.1110717108 and Hancock & Godfray (2007) <doi:10.1186/1475-2875-6-98>, 
     and extensions to accommodate basic CRISPR homing dynamics in Marshall et al. (2017) 
     <doi:10.1038/s41598-017-02744-7>.
 License: GPL-3
