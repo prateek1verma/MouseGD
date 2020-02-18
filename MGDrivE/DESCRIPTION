@@ -1,4 +1,4 @@
-Package: MGDrivE
+﻿Package: MGDrivE
 Type: Package
 Title: Mouse Gene Drive Explorer
 Version: 1.5.0
@@ -7,7 +7,7 @@ Authors@R: c(
     person("Jared", "Bennett", email = "jared_bennett@berkeley.edu ", role = "aut"),
     person("Sean", "Wu", email = "slwu89@berkeley.edu", role = "aut"),
     person("John M.", "Marshall", email = "john.marshall@berkeley.edu", role = "aut"),
-    person("Ethan A.", "Brown", email = "browne40@wwu.edu", role = "modifier")
+    person("Ethan A.", "Brown", email = "browne40@wwu.edu", role = "aut")
     )
 Maintainer: Ethan Alexander Brown <browne40@wwu.edu>
 URL: https://github.com/eabrown2378/MGDrivE 
