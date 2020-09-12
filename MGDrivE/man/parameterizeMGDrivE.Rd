@@ -13,11 +13,11 @@ parameterizeMGDrivE(
   tEgg = 19L,
   tLarva = 23L,
   tPupa = 37L,
-  tAd = 690L,
-  beta = 0.154,
-  muAd = 0.0013,
+  beta = 8L,
+  litters = 7.5,
+  muAd = I(1/769),
   popGrowth = 1.002,
-  AdPopEQ,
+  k,
   LarPopRatio,
   AdPopRatio_F,
   AdPopRatio_M,
@@ -43,15 +43,15 @@ lead to high variance and large values lead to low variance.}
 
 \item{tPupa}{Length of pupal stage}
 
-\item{tAd}{Length of adult stage}
-
 \item{beta}{Female egg batch size of wild-type}
+
+\item{litters}{number of litters per female mouse per year}
 
 \item{muAd}{Wild-type daily adult mortality (1/muAd is average wild-type lifespan)}
 
 \item{popGrowth}{Daily population growth rate (used to calculate equilibrium)}
 
-\item{AdPopEQ}{Single number or vector of adult population size at equilibrium
+\item{k}{Single number or vector of adult population size at equilibrium
 (single number implies all patches have the same population)}
 
 \item{LarPopRatio}{May be empty; if not, a vector gives the wildtype gene frequencies
@@ -82,6 +82,6 @@ and \code{\link{calcLarvalPopEquilibrium}}.
 # using default parameters for 2 patches
 #  using different population sizes for patches
 simPars <- parameterizeMGDrivE(nPatch = 2, simTime = 365,
-                               AdPopEQ = c(100,200), inheritanceCube = cubeMendelian())
+                               k = c(100,200), inheritanceCube = cubeMendelian())
 
 }

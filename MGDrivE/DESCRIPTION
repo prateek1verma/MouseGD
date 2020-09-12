@@ -1,4 +1,4 @@
-﻿Package: MGDrivE
+Package: MGDrivE
 Type: Package
 Title: Mouse Gene Drive Explorer
 Version: 1.5.0
@@ -18,7 +18,7 @@ Description: A modification of the package "MGDrivE" (Sanchez et al. 2019 - doi:
     <doi:10.1038/s41598-017-02744-7>.
 License: GPL-3
 Encoding: UTF-8
-Imports: R6, Rcpp, Rdpack (>= 0.7), grDevices, graphics, stats, utils
+Imports: R6, Rcpp, Rdpack (>= 0.7), grDevices, graphics, stats, utils, BBmisc
 RdMacros: Rdpack
 LinkingTo: Rcpp
 Depends: R (>= 2.10)

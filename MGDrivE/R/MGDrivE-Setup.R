@@ -6,9 +6,11 @@
 #   /_/  /_/\____/_____/_/  /_/ |___/_____/
 #
 #   setupMGDrivE
-#   Marshall Lab
+#   Original Code by: Marshall Lab
 #   jared_bennett@berkeley.edu
 #   December 2019
+#   MODIFIED BY: ETHAN A. BROWN (JUL 11 2020)
+#   ebrown23@nd.edu
 #
 ###############################################################################
 
@@ -45,23 +47,23 @@ setupMGDrivE <- function(stochasticityON = FALSE, verbose = TRUE){
     Patch$set(which = "public",name = "oneDay_adultD",
               value = oneDay_adultDeath_stochastic_Patch, overwrite = overwrite)
 
-    Patch$set(which = "public",name = "oneDay_pupaDM",
-              value = oneDay_pupaDM_stochastic_Patch, overwrite = overwrite)
+    Patch$set(which = "public",name = "oneDay_adoDM",
+              value = oneDay_adoDM_stochastic_Patch, overwrite = overwrite)
 
-    Patch$set(which = "public",name = "oneDay_larvaDM",
-              value = oneDay_larvaDM_stochastic_Patch, overwrite = overwrite)
+    Patch$set(which = "public",name = "oneDay_nursingDM",
+              value = oneDay_nursingDM_stochastic_Patch, overwrite = overwrite)
 
-    Patch$set(which = "public",name = "oneDay_eggDM",
-              value = oneDay_eggDM_stochastic_Patch, overwrite = overwrite)
+    Patch$set(which = "public",name = "oneDay_gestDM",
+              value = oneDay_gestDM_stochastic_Patch, overwrite = overwrite)
 
-    Patch$set(which = "public",name = "oneDay_pupation",
-              value = oneDay_pupation_stochastic_Patch, overwrite = overwrite)
+    Patch$set(which = "public",name = "oneDay_maturation",
+              value = oneDay_maturation_stochastic_Patch, overwrite = overwrite)
 
     Patch$set(which = "public",name = "oneDay_mating",
               value = oneDay_mating_stochastic_Patch, overwrite = overwrite)
 
-    Patch$set(which = "public",name = "oneDay_layEggs",
-              value = oneDay_oviposit_stochastic_Patch, overwrite = overwrite)
+    Patch$set(which = "public",name = "oneDay_layPups",
+              value = oneDay_conceive_stochastic_Patch, overwrite = overwrite)
 
     Patch$set(which = "public",name = "oneDay_migrationOut",
           value = oneDay_migrationOut_stochastic_Patch, overwrite = overwrite)
@@ -74,23 +76,23 @@ setupMGDrivE <- function(stochasticityON = FALSE, verbose = TRUE){
     Patch$set(which = "public",name = "oneDay_adultD",
               value = oneDay_adultDeath_deterministic_Patch, overwrite = overwrite)
 
-    Patch$set(which = "public",name = "oneDay_pupaDM",
-              value = oneDay_pupaDM_deterministic_Patch, overwrite = overwrite)
+    Patch$set(which = "public",name = "oneDay_adoDM",
+              value = oneDay_adoDM_deterministic_Patch, overwrite = overwrite)
 
-    Patch$set(which = "public",name = "oneDay_larvaDM",
-              value = oneDay_larvaDM_deterministic_Patch, overwrite = overwrite)
+    Patch$set(which = "public",name = "oneDay_nursingDM",
+              value = oneDay_nursingDM_deterministic_Patch, overwrite = overwrite)
 
-    Patch$set(which = "public",name = "oneDay_eggDM",
-              value = oneDay_eggDM_deterministic_Patch, overwrite = overwrite)
+    Patch$set(which = "public",name = "oneDay_gestDM",
+              value = oneDay_gestDM_deterministic_Patch, overwrite = overwrite)
 
-    Patch$set(which = "public",name = "oneDay_pupation",
-              value = oneDay_pupation_deterministic_Patch, overwrite = overwrite)
+    Patch$set(which = "public",name = "oneDay_maturation",
+              value = oneDay_maturation_deterministic_Patch, overwrite = overwrite)
 
     Patch$set(which = "public",name = "oneDay_mating",
               value = oneDay_mating_deterministic_Patch, overwrite = overwrite)
 
-    Patch$set(which = "public",name = "oneDay_layEggs",
-              value = oneDay_oviposit_deterministic_Patch, overwrite = overwrite)
+    Patch$set(which = "public",name = "oneDay_layPups",
+              value = oneDay_conceive_deterministic_Patch, overwrite = overwrite)
 
     Patch$set(which = "public",name = "oneDay_migrationOut",
               value = oneDay_migrationOut_deterministic_Patch, overwrite = overwrite)
@@ -115,8 +117,8 @@ setupMGDrivE <- function(stochasticityON = FALSE, verbose = TRUE){
   Patch$set(which = "public",name = "oneDay_releases",
           value = oneDay_releases_Patch, overwrite = overwrite)
 
-  Patch$set(which = "public",name = "oneDay_releaseEggs",
-          value = oneDay_eggReleases_Patch, overwrite = overwrite)
+  Patch$set(which = "public",name = "oneDay_releasePups",
+          value = oneDay_gestReleases_Patch, overwrite = overwrite)
 
   Patch$set(which = "public",name = "oneDay_migrationIn",
           value = oneDay_migrationIn_Patch, overwrite = overwrite)

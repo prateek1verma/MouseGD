@@ -6,10 +6,11 @@
 #    /_/    \__,_/\__/\___/_/ /_/
 #
 #   Patch Class Definition
-#   Marshall Lab
+#   Original Code by: Marshall Lab
 #   jared_bennett@berkeley.edu
 #   December 2019
-#
+#   MODIFIED BY: ETHAN A. BROWN (JUL 9 2020)
+#   ebrown23@nd.edu
 ###############################################################################
 
 #' Patch Class Definition
@@ -25,16 +26,13 @@
 #' @section **Constructor**:
 #'  * patchID: integer ID of this patch
 #'  * genotypesID: character vector of genotypes
-#'  * timeAq: integer vector of length 3 specifying the length of each aquatic stage
+#'  * timeJu: integer vector of length 3 specifying the length of each juvenile stage
 #'  * numPatches: integer, total number of patches in this simulation
 #'  * adultEQ: integer, total adult population in this patch for the duration of the simulation
-#'  * larvalEQ: integer, total larval population in this patch for the duration of the simulation
-#'  * muAq: double vector, length 3, daily death rate for each aquatic stage
-#'  * alpha: double, density-dependent centering parameter, see \code{\link{parameterizeMGDrivE}}
+#'  * k: double, carrying capacity parameter, see \code{\link{parameterizeMGDrivE}}
 #'  * adultRatioF: named double vector, distribution of adult female genotypes, see \code{\link{parameterizeMGDrivE}}
 #'  * adultRatioM: named double vector, distribution of adult male genotypes, see \code{\link{parameterizeMGDrivE}}
-#'  * larvalRatio: named double vector, distribution of all aquatic genotypes, see \code{\link{parameterizeMGDrivE}}
-#'  * eggReleases: egg release schedule for this patch, see \code{\link{basicRepeatedReleases}}
+#'  * gestReleases: gestating pup release schedule for this patch, see \code{\link{basicRepeatedReleases}}
 #'  * maleReleases: male release schedule for this patch, see \code{\link{basicRepeatedReleases}}
 #'  * femaleReleases: female release schedule for this patch, see \code{\link{basicRepeatedReleases}}
 #'  * matedFemaleReleases: mated females release schedule for this patch, see \code{\link{basicRepeatedReleases}}
@@ -52,29 +50,29 @@
 #'  * oneDay_migrationIn: see \code{\link{oneDay_migrationIn_Patch}}
 #'  * oneDay_PopDynamics: see \code{\link{oneDay_PopDynamics_Patch}}
 #'  * oneDay_adultD: see \code{\link{oneDay_adultDeath_deterministic_Patch}} or \code{\link{oneDay_adultDeath_stochastic_Patch}}
-#'  * oneDay_pupaDM: see \code{\link{oneDay_pupaDM_deterministic_Patch}} or \code{\link{oneDay_pupaDM_stochastic_Patch}}
-#'  * oneDay_larvaDM: see \code{\link{oneDay_larvaDM_deterministic_Patch}} or \code{\link{oneDay_larvaDM_stochastic_Patch}}
-#'  * oneDay_eggDM: see \code{\link{oneDay_eggDM_deterministic_Patch}} or \code{\link{oneDay_eggDM_stochastic_Patch}}
-#'  * oneDay_pupation: see \code{\link{oneDay_pupation_deterministic_Patch}} or \code{\link{oneDay_pupation_stochastic_Patch}}
+#'  * oneDay_adoDM: see \code{\link{oneDay_adoDM_deterministic_Patch}} or \code{\link{oneDay_adoDM_stochastic_Patch}}
+#'  * oneDay_nursingDM: see \code{\link{oneDay_nursingDM_deterministic_Patch}} or \code{\link{oneDay_nursingDM_stochastic_Patch}}
+#'  * oneDay_gestDM: see \code{\link{oneDay_gestDM_deterministic_Patch}} or \code{\link{oneDay_gestDM_stochastic_Patch}}
+#'  * oneDay_maturation: see \code{\link{oneDay_maturation_deterministic_Patch}} or \code{\link{oneDay_maturation_stochastic_Patch}}
 #'  * oneDay_releases: see \code{\link{oneDay_releases_Patch}}
-#'  * oneDay_releaseEggs: see \code{\link{oneDay_eggReleases_Patch}}
+#'  * oneDay_releasePups: see \code{\link{oneDay_gestReleases_Patch}}
 #'  * oneDay_mating: see \code{\link{oneDay_mating_deterministic_Patch}} or \code{\link{oneDay_mating_stochastic_Patch}}
-#'  * oneDay_layEggs: see \code{\link{oneDay_oviposit_deterministic_Patch}} or \code{\link{oneDay_oviposit_stochastic_Patch}}
+#'  * oneDay_layPups: see \code{\link{oneDay_oviposit_deterministic_Patch}} or \code{\link{oneDay_oviposit_stochastic_Patch}}
 #'
 #' @section **Fields**:
 #'  * patchID: integer ID of this patch
-#'  * popAquatic: matrix, nGenotype x sum(timeAquatic), holding all eggs, larva, and pupa
+#'  * popJuvenile: matrix, nGenotype x sum(timeJuvenile), holding all gestating pups, nursing pups, and adolescent pups
 #'  * popMale: vector, nGenotype x 1, holds adult males
 #'  * popFemale: matrix, nGenotype x nGenotype, holds mated adult females
 #'  * popHolder: vector, nGenotype x 1, temporary population storage
-#'  * popPupSex: vector, nGenotype x 1, used in stochastic pupation as another temporary population
+#'  * popPupSex: vector, nGenotype x 1, used in stochastic maturation as another temporary population
 #'  * popUnmated: vector, nGenotype x 1, holds unmated females
 #'  * mMig: matrix, nGenotype x nPatches, holds outbound males for migration, see \code{\link{oneDay_migrationOut_deterministic_Patch}} or \code{\link{oneDay_migrationOut_stochastic_Patch}}
 #'  * fMig: array, nGenotype x nGenotype x nPatches, holds outbound females for migration, see \code{\link{oneDay_migrationOut_deterministic_Patch}} or \code{\link{oneDay_migrationOut_stochastic_Patch}}
-#'  * popAquatict0: matrix, nGenotype x sum(timeAquatic), holding all eggs, larva, and pupa for reset, see \code{\link{reset_Patch}}
+#'  * popJuvenilet0: matrix, nGenotype x sum(timeJuvenile), holding all gestating pups, nursing pups, and maturation for reset, see \code{\link{reset_Patch}}
 #'  * popMalet0: vector, nGenotype x 1, holds adult males for reset see \code{\link{reset_Patch}}
 #'  * popFemalet0: matrix, nGenotype x nGenotype, holds mated adult females for reset see \code{\link{reset_Patch}}
-#'  * eggReleases: list of egg releases for this patch. See \code{\link{oneDay_eggReleases_Patch}}
+#'  * gestReleases: list of gestating pup releases for this patch. See \code{\link{oneDay_gestReleases_Patch}}
 #'  * maleReleases: list of adult male releases for this patch. See \code{\link{oneDay_releases_Patch}}
 #'  * femaleReleases: list of adult female releases for this patch. See \code{\link{oneDay_releases_Patch}}
 #'  * matedFemaleReleases: list of mated adult female releases for this patch. See \code{\link{oneDay_releases_Patch}}
@@ -87,17 +85,16 @@ Patch <- R6::R6Class(classname = "Patch",
             lock_objects = FALSE,
             class = FALSE,
 
-            # public memebers
+            # public members
             public = list(
 
                 #################################################
                 # Constructor
                 #################################################
 
-                initialize = function(patchID, genotypesID, timeAq, numPatches,
-                                      adultEQ, larvalEQ, muAq, alpha,
-                                      adultRatioF, adultRatioM, larvalRatio,
-                                      eggReleases = NULL,
+                initialize = function(patchID, genotypesID, timeJu, timeAd, numPatches,
+                                      k, muAd, adultRatioF, adultRatioM,
+                                      gestReleases = NULL,
                                       maleReleases = NULL,
                                       femaleReleases = NULL,
                                       matedFemaleReleases = NULL
@@ -108,32 +105,38 @@ Patch <- R6::R6Class(classname = "Patch",
 
                   # initialize objects for simulation. This way, they have dimensions and names
                   nGeno = length(genotypesID)
-                  private$popAquatic = matrix(data = 0,  nrow = nGeno, ncol = sum(timeAq),
+                  private$popJuvenile = matrix(data = 0,  nrow = nGeno, ncol = sum(timeJu),
                                               dimnames = list(genotypesID, NULL))
+                  #private$popAdult = matrix(data = 0,  nrow = nGeno, ncol = 2,
+                                              #dimnames = list(genotypesID, c("M","F")))
                   private$popMale = setNames(object = numeric(length = nGeno), nm = genotypesID)
                   private$popFemale = matrix(data = 0, nrow = nGeno, ncol = nGeno,
                                              dimnames = list(genotypesID, genotypesID))
                   private$popHolder = setNames(object = numeric(length = nGeno), nm = genotypesID)
                   private$popPupSex = setNames(object = numeric(length = nGeno), nm = genotypesID)
                   private$popUnmated = setNames(object = numeric(length = nGeno), nm = genotypesID)
+                  private$popMating = setNames(object = numeric(length = nGeno), nm = genotypesID)
+                  private$popMatches = matrix(data = 0, nrow = nGeno, ncol = nGeno,
+                                             dimnames = list(genotypesID, genotypesID))
 
                   private$mMig = matrix(data=0, nrow=nGeno, ncol=numPatches)
                   private$fMig = array(data = 0, dim=c(nGeno,nGeno,numPatches))
 
                   # set initial population
-                  self$setPopulation(adultEQ = adultEQ, larvalEQ = larvalEQ,
+                  self$setPopulation(k = k,
                                      adultRatioF = adultRatioF,
                                      adultRatioM = adultRatioM,
-                                     larvalRatio = larvalRatio,
-                                     timeAq = timeAq, muAq = muAq, alpha = alpha)
+                                     timeAd = timeAd,
+                                     muAd = muAd)
 
                   # store reset populations
-                  private$popAquatict0 = private$popAquatic
+                  private$popJuvenilet0 = private$popJuvenile
                   private$popMalet0 = private$popMale
+                  private$popUnmatedt0 = private$popUnmated
                   private$popFemalet0 = private$popFemale
 
                   # Mosquito Releases
-                  private$eggReleases = eggReleases
+                  private$gestReleases = gestReleases
                   private$maleReleases = maleReleases
                   private$femaleReleases = femaleReleases
                   private$matedFemaleReleases = matedFemaleReleases
@@ -147,11 +150,11 @@ Patch <- R6::R6Class(classname = "Patch",
               patchID = NULL,
 
               # temporary populations
-              popAquatic = NULL,
+              popJuvenile = NULL,
               popMale = NULL,
               popFemale = NULL,
               popHolder = NULL,
-              popPupSex = NULL, # only used in stochastic pupation function
+              popPupSex = NULL, # only used in stochastic maturation function
               popUnmated = NULL,
 
               # migration
@@ -159,12 +162,15 @@ Patch <- R6::R6Class(classname = "Patch",
               fMig = NULL,
 
               # reset populations
-              popAquatict0 = NULL,
+              popJuvenilet0 = NULL,
               popMalet0 = NULL,
+              popUnmatedt0 = NULL,
               popFemalet0 = NULL,
+              popMatingt0 = NULL,
+              popMatchest0 = NULL,
 
               # releases
-              eggReleases = NULL,
+              gestReleases = NULL,
               maleReleases = NULL,
               femaleReleases = NULL,
               matedFemaleReleases = NULL,

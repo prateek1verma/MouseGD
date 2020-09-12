@@ -2,29 +2,33 @@
 % Please edit documentation in R/Network-Parameters.R
 \name{calcDensityDependentDeathRate}
 \alias{calcDensityDependentDeathRate}
-\title{Calculate Density-dependent Larval Mortality}
+\title{Calculate Density-dependent Adult Mortality}
 \usage{
 calcDensityDependentDeathRate(
   fertility,
+  litters,
   thetaAq,
   thetaAd,
   tAq,
-  adultPopSizeEquilibrium,
+  carryingCap,
   populationGrowthRate
 )
 }
 \arguments{
-\item{fertility}{Number of eggs per oviposition for wild-type females, \eqn{\beta}}
+\item{fertility}{Number of pups per litter for wild-type females, \eqn{\beta}}
 
-\item{thetaAq}{Vector of density-independent survival probabilities of aquatic stages, \eqn{\theta_{e}, \theta_{l}}}
+\item{litters}{number of litters per female mouse per year}
 
-\item{adultPopSizeEquilibrium}{Adult population size at equilibrium, \eqn{Ad_{eq}}}
+\item{thetaAq}{Vector of density-independent survival probabilities of adolescent stages, \eqn{\theta_{e}, \theta_{l}}}
+
+\item{thetaAd}{density-independent survival probability of adult stage}
+
+\item{tAq}{Length of Adolescent Life Stages, \eqn{T_{a}}}
+
+\item{carryingCap}{Adult population carrying capacity, \eqn{k}}
 
 \item{populationGrowthRate}{Population growth in absence of density-dependent mortality \eqn{R_{m}}}
-
-\item{tAd}{Vector of lengths of aquatic stages, \eqn{T_{a}}}
 }
 \description{
-Calculate \eqn{\alpha}, the strength of density-dependent mortality during the
-larval stage, given by: \deqn{\alpha=\Bigg( \frac{1/2 * \beta * \theta_e * Ad_{eq}}{R_m-1} \Bigg) * \Bigg( \frac{1-(\theta_l / R_m)}{1-(\theta_l / R_m)^{1/T_l}} \Bigg)}
+
 }

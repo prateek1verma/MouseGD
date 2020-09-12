@@ -5,19 +5,20 @@
 \title{Set Initial Population}
 \usage{
 set_initialPopulation_Patch(
-  adultEQ = adultEQ,
+  k = k,
   larvalEQ = larvalEQ,
   adultRatioF = adultRatioF,
   adultRatioM = adultRatioM,
   larvalRatio = larvalRatio,
   timeAq = timeAq,
   muAq = muAq,
+  alpha = alpha,
   muAd = muAd,
-  alpha = alpha
+  timeAd = timeAd
 )
 }
 \arguments{
-\item{adultEQ}{Equilibrium number of adults}
+\item{k}{Carrying capacity constant}
 
 \item{larvalEQ}{Equilibrium number of larvae}
 
@@ -32,6 +33,10 @@ set_initialPopulation_Patch(
 \item{muAq}{Aquatic death rate}
 
 \item{alpha}{Density-dependent centering parameter}
+
+\item{muAd}{daily survival of adult stage}
+
+\item{timeAd}{approximate length of adult life stage}
 }
 \description{
 This hidden function distributes the population at time 0 in the steady-state

@@ -6,10 +6,11 @@
 #   /_/ |_/\___/\__/ |__/|__/\____/_/  /_/|_|
 #
 #   Network Class Definition
-#   Marshall Lab
+#   Original Code by: Marshall Lab
 #   jared_bennett@berkeley.edu
 #   December 2019
-#   MODIFIED BY: ETHAN A. BROWN (FEB 7 2020)
+#   MODIFIED BY: ETHAN A. BROWN (JUL 12 2020)
+#   ebrown23@nd.edu
 ###############################################################################
 ###############################################################################
 # Class Definition
@@ -36,11 +37,11 @@
 #'
 #' @section **Methods**:
 #'  * get_moveVar: see \code{\link{get_moveVar_Network}}
-#'  * get_timeAq: see \code{\link{get_timeAq_Network}}
+#'  * get_timeJu: see \code{\link{get_timeJu_Network}}
 #'  * get_beta: see \code{\link{get_beta_Network}}
 #'  * get_muAd: see \code{\link{get_muAd_Network}}
-#'  * get_muAq: see \code{\link{get_muAq_Network}}
-#'  * get_alpha: see \code{\link{get_alpha_Network}}
+#'  * get_k: see \code{\link{get_k_Network}}
+#'  * get_theta: see \code{\link{get_theta_Network}}
 #'  * get_drivecubeindex: see \code{\link{get_drivecubeindex_Network}}
 #'  * get_tau: see \code{\link{get_tau_Network}}
 #'  * get_genotypesID: see \code{\link{get_genotypesID_Network}}
@@ -115,7 +116,7 @@ Network <- R6::R6Class(classname = "Network",
                 #################################################
                 initialize = function(params, driveCube, patchReleases,
                                       migrationMale, migrationFemale, migrationBatch = NULL,
-                                      directory, verbose = TRUE){
+                                      directory, toxMort = NULL, toxInt = NULL, verbose = TRUE){
 
                   # safety check
                   if(length(patchReleases) != params$nPatch){
@@ -131,6 +132,10 @@ Network <- R6::R6Class(classname = "Network",
                   private$driveCube = driveCube
                   private$directory = directory
                   private$runID = params$runID
+                  private$toxMort = toxMort # estimated average toxicant-induced mortality for adult mice
+                  private$toxInt = toxInt # time interval of toxicant deployment
+
+
 
                   # daily migration objects
                   private$migrationMale = migrationMale
@@ -160,19 +165,18 @@ Network <- R6::R6Class(classname = "Network",
                    # initialize patch
                     private$patches[[i]] = Patch$new(patchID = i,
                                                      genotypesID = driveCube$genotypesID,
-                                                     timeAq = params$timeAq,
+                                                     timeJu = params$timeJu,
+                                                     timeAd = params$timeAd,
                                                      numPatches = private$nPatch,
-                                                     adultEQ = params$AdPopEQ[i],
-                                                     larvalEQ = params$Leq[i],
-                                                     muAq = params$muAq,
-                                                     alpha = params$alpha[i],
+                                                     k = params$k[i],
+                                                     muAd = params$muAd,
                                                      adultRatioF = params$AdPopRatio_F[i, ],
                                                      adultRatioM = params$AdPopRatio_M[i, ],
-                                                     larvalRatio = params$LarPopRatio[i, ],
-                                                     eggReleases = patchReleases[[i]]$eggReleases,
+                                                     gestReleases = patchReleases[[i]]$gestReleases,
                                                      maleReleases = patchReleases[[i]]$maleReleases,
                                                      femaleReleases = patchReleases[[i]]$femaleReleases,
                                                      matedFemaleReleases = patchReleases[[i]]$matedFemaleReleases
+
                                                    )
 
                     # set pointers
@@ -208,6 +212,7 @@ Network <- R6::R6Class(classname = "Network",
                 tNow = 2L, # time starts at 2 because time 1 is the initial condition
                 runID = numeric(1),
 
+
                 # output
                 directory = NULL, # directory to store all patch output
                 conADM = NULL,
@@ -242,32 +247,42 @@ Network$set(which = "public",name = "get_moveVar",
   value = get_moveVar_Network,overwrite = TRUE
 )
 
-#' Get timeAq
+#' Get timeJu
 #'
-#' Return duration of aquatic stages.
+#' Return duration of juvenile stages.
 #'
-#' @param stage Character in 'E', 'L', 'P'; if \code{NULL} return total duration
+#' @param stage Character in 'G', 'N', 'A'; if \code{NULL} return total duration
 #'
-get_timeAq_Network <- function(stage = NULL){
+get_timeJu_Network <- function(stage = NULL){
   if(is.null(stage)){
-    return(sum(private$parameters$timeAq))
+    return(sum(private$parameters$timeJu))
   } else {
-    return(private$parameters$timeAq[[stage]])
+    return(private$parameters$timeJu[[stage]])
   }
 }
 
-Network$set(which = "public",name = "get_timeAq",
-  value = get_timeAq_Network,overwrite = TRUE
+Network$set(which = "public",name = "get_timeJu",
+  value = get_timeJu_Network,overwrite = TRUE
 )
 
 #' Get beta
 #'
-#' Return size of wild-type egg batch
+#' Return size of wild-type litter size
 #'
 get_beta_Network <- function(){return(private$parameters$beta)}
 
 Network$set(which = "public",name = "get_beta",
   value = get_beta_Network,overwrite = TRUE
+)
+
+#' Get litters
+#'
+#' Return annual number of wild-type litters
+#'
+get_litters_Network <- function(){return(private$parameters$litters)}
+
+Network$set(which = "public",name = "get_litters",
+            value = get_litters_Network,overwrite = TRUE
 )
 
 #' Get muAd
@@ -280,36 +295,48 @@ Network$set(which = "public",name = "get_muAd",
   value = get_muAd_Network,overwrite = TRUE
 )
 
-#' Get tAd
+#' Get timeAd
 #'
 #' Return time of the adult life stage
 #'
-get_tAd_Network <- function(){return(private$parameters$tAd)}
+get_timeAd_Network <- function(){return(private$parameters$timeAd)}
 
-Network$set(which = "public",name = "get_tAd",
-            value = get_tAd_Network,overwrite = TRUE
+Network$set(which = "public",name = "get_timeAd",
+            value = get_timeAd_Network,overwrite = TRUE
 )
 
-#' Get muAq
+#' Get g
 #'
-#' Return larval mortality, see \code{\link{calcLarvalStageMortalityRate}}
+#' Return time of the adult life stage
 #'
-get_muAq_Network <- function(){return(private$parameters$muAq)}
+get_g_Network <- function(){return(private$parameters$g)}
 
-Network$set(which = "public",name = "get_muAq",
-  value = get_muAq_Network,overwrite = TRUE
+Network$set(which = "public",name = "get_g",
+            value = get_g_Network,overwrite = TRUE
 )
 
-#' Get alpha
+#' Get k
 #'
-#' Return density dependent mortality, see \code{\link{calcDensityDependentDeathRate}}
+#' Return carrying capacity parameter
 #'
 #' @param ix Index of patch
 #'
-get_alpha_Network <- function(ix){return(private$parameters$alpha[ix])}
+get_k_Network <- function(ix){return(private$parameters$k[ix])}
 
-Network$set(which = "public",name = "get_alpha",
-  value = get_alpha_Network,overwrite = TRUE
+Network$set(which = "public",name = "get_k",
+            value = get_k_Network,overwrite = TRUE
+)
+
+#' Get theta
+#'
+#' Return shape parameter for carrying capacity function
+#'
+#' @param ix Index of patch
+#'
+get_theta_Network <- function(){return(private$parameters$theta)}
+
+Network$set(which = "public",name = "get_theta",
+            value = get_theta_Network,overwrite = TRUE
 )
 
 ###############################################################################
@@ -440,6 +467,26 @@ Network$set(which = "public",name = "get_s",
 # Getters & Setters: Other
 ###############################################################################
 
+#' Get toxMort
+#'
+#' Return average daily toxicant-induced mortality
+#'
+get_toxMort_Network <- function(){return(private$toxMort)}
+
+Network$set(which = "public",name = "get_toxMort",
+            value = get_toxMort_Network,overwrite = TRUE
+)
+
+#' Get toxInt
+#'
+#' Return interval of toxicant deployment
+#'
+get_toxInt_Network <- function(){return(private$toxInt)}
+
+Network$set(which = "public",name = "get_toxInt",
+            value = get_toxInt_Network,overwrite = TRUE
+)
+
 #' Get nPatch
 #'
 #' Return number of patches
@@ -509,13 +556,13 @@ Network$set(which = "public",name = "get_migrationFemaleRow",
 #' Return the release schedule for a patch for male or female
 #'
 #' @param patch Index of patch
-#' @param sex Character in 'M', 'F', 'Egg', 'mF'
+#' @param sex Character in 'M', 'F', 'Pup', 'mF'
 #'
 get_patchReleases_Network <- function(patch, sex = "M"){
   switch(sex,
     M = {return(private$patchReleases[[patch]]$maleReleases)},
     F = {return(private$patchReleases[[patch]]$femaleReleases)},
-    Egg = {return(private$patchReleases[[patch]]$eggReleases)}, # use Egg because of R CRAN CHECK partial match issue
+    Gest = {return(private$patchReleases[[patch]]$gestReleases)},
     mF = {return(private$patchReleases[[patch]]$matedFemaleReleases)}
   )
 }

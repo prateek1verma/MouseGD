@@ -6,17 +6,18 @@
 #   /_/ |_/\___/\__/ |__/|__/\____/_/  /_/|_|
 #
 #   parameterizeMGDrivE
-#   Marshall Lab
+#   Original Code by: Marshall Lab
 #   jared_bennett@berkeley.edu
 #   December 2019
-#   MODIFIED BY: ETHAN A. BROWN (FEB 7 2020)
+#   MODIFIED BY: ETHAN A. BROWN (JUL 12 2020)
+#   ebrown23@nd.edu
 ###############################################################################
 
 #' parameterizeMGDrivE
 #'
 #' Generate parameters for simulation on a \code{\link{Network}}.
 #' Parameters include: average generation time \eqn{g}, population growth rate \eqn{R_{m}},
-#' aquatic mortality \eqn{\mu_{Aq}}, and aquatic survival \eqn{\theta_{Aq}}, which
+#' juvenile mortality \eqn{\mu_{Ju}}, and juvenile survival \eqn{\theta_{Ju}}, which
 #' are shared between patches and calculated by \code{\link{calcAverageGenerationTime}},
 #' \code{\link{calcPopulationGrowthRate}}, and \code{\link{calcLarvalStageMortalityRate}}. \cr
 #' Patch-specific parameters \eqn{\alpha} and \eqn{L_{eq}}
@@ -30,18 +31,15 @@
 #' @param moveVar Variance of stochastic movement (not used in diffusion model of migration).
 #' It affects the concentration of probability in the Dirchlet simplex, small values
 #' lead to high variance and large values lead to low variance.
-#' @param tEgg Length of egg stage
-#' @param tLarva Length of larval instar stage
-#' @param tPupa Length of pupal stage
-#' @param tAd Length of adult stage
-#' @param beta Female egg batch size of wild-type
+#' @param tGest Length of gestation stage
+#' @param tNursing Length of nursing stage
+#' @param tAdo Length of adolescent stage
+#' @param beta Female litter size of wild-type
 #' @param muAd Wild-type daily adult mortality (1/muAd is average wild-type lifespan)
-#' @param popGrowth Daily population growth rate (used to calculate equilibrium)
-#' @param AdPopEQ Single number or vector of adult population size at equilibrium
-#' (single number implies all patches have the same population)
-#' @param LarPopRatio May be empty; if not, a vector gives the wildtype gene frequencies
-#' among larval stages at the beginning of simulation or a matrix provides different
-#' initial frequencies for each patch (every row is a different patch, must have nrow = nPatch)
+#' @param k Single number or vector of adult population carrying capacity at equilibrium
+#' (single number implies all patches have the same population, but populations for
+#' individual patches can be specified with a vector)
+#' @param theta Shape parameter for mediating the carrying capacity for adult mice
 #' @param AdPopRatio_F May be empty; if not, a vector gives the wildtype gene frequencies
 #' among adult females at the beginning of simulation or a matrix provides different
 #' initial frequencies for each patch (every row is a different patch, must have nrow = nPatch)
@@ -49,12 +47,13 @@
 #' among adult males at the beginning of simulation or a matrix provides different
 #' initial frequencies for each patch (every row is a different patch, must have nrow = nPatch)
 #' @param inheritanceCube Inheritance cube to check/set population ratios at the beginning of the simulation
+#' @param litters average number of litters per female mouse per year
 #'
 #' @examples
 #' # using default parameters for 2 patches
 #' #  using different population sizes for patches
 #' simPars <- parameterizeMGDrivE(nPatch = 2, simTime = 365,
-#'                                AdPopEQ = c(100,200), inheritanceCube = cubeMendelian())
+#'                                k = c(100,200), inheritanceCube = cubeMendelian())
 #'
 #' @export
 parameterizeMGDrivE <- function(
@@ -63,23 +62,24 @@ parameterizeMGDrivE <- function(
   simTime,
   sampTime = 1L,
   moveVar = 1000L,
-  tEgg = 19L,
-  tLarva = 23L,
-  tPupa = 37L,
-  tAd = 690L,
-  beta = 0.154,
-  muAd = 0.0013,
-  popGrowth = 1.003,
-  AdPopEQ,
-  LarPopRatio,
+  tGest = 19L,
+  tNursing = 23L,
+  tAdo = 37L,
+  beta = 6,
+  litters = 7.5,
+  muAd = I(1/690),
+  k,
+  theta = 22.4,
   AdPopRatio_F,
   AdPopRatio_M,
   inheritanceCube
 ){
 
   # check required parameters
-  if(any(missing(nPatch),missing(simTime),missing(AdPopEQ),missing(inheritanceCube))){
-    stop("nPatch, simTime, AdPopEQ, and inheritanceCube must be provided by the user.")
+
+
+  if(any(missing(nPatch),missing(simTime),missing(k),missing(inheritanceCube))){
+    stop("nPatch, simTime, k, and inheritanceCube must be provided by the user.")
   }
 
   # make empty parameter list
@@ -93,66 +93,30 @@ parameterizeMGDrivE <- function(
   pars$runID = runID
 
   # biological parameters
-  pars$timeAq = c("E"=tEgg, "L"=tLarva, "P"=tPupa)
-  pars$timeAd = tAd
-  pars$beta = beta # assumes 3-12 pups per litter
-                                                  # assumes female mice have between 5-10 litters per year
-                                                  # sampled from disrete uniform distribution
+  pars$timeJu = c("G"=tGest, "N"=tNursing, "A"=tAdo)
+  pars$timeAd = 1/muAd-sum(pars$timeJu)
+  pars$beta = beta # assumes average of 7.5 pups per litter. The decimal is appropriate because it is used to
+  # calculate a rate parameter (lambda) in a Poisson distribution, so the number of pups will always be an integer
+                        #
+  pars$litters = litters # assumes female mice have a median number of litters per year (assume no leap year)
+                               # that determines the probability that each female will birth a litter on a given day
 
   # initial parameters
   pars$muAd = muAd
-  pars$dayPopGrowth = popGrowth
-
-  if(length(AdPopEQ) == 1){
-    AdPopEQ = rep.int(x = AdPopEQ, times = nPatch)
-  } else if(length(AdPopEQ)!=nPatch){
-    stop("length of AdPopEQ vector must be 1 or nPatch (number of patches)")
+  pars$theta = theta
+  pars$k = k
+  if(length(pars$k) == 1){
+    pars$k = rep.int(x = pars$k, times = nPatch)
+  } else if(length(pars$k)!=nPatch){
+    stop("length of k vector must be 1 or nPatch (number of patches)")
   }
-  pars$AdPopEQ = AdPopEQ
 
 
-  # setup larval initial pop ratio
-  if(missing(LarPopRatio)){
-    # default behaviour - this way nothing needs to be specified
-    # setup vector of the correct length with all weights equal
-    larRatio <- rep.int(x = 1, times = length(inheritanceCube$wildType))
-    # normalize to 1
-    larRatio <- larRatio/sum(larRatio)
-    # set all patches to the same thing
-    pars$LarPopRatio <- matrix(data = larRatio, nrow = nPatch, ncol = length(inheritanceCube$wildType),
-                                 byrow = TRUE, dimnames = list(NULL,inheritanceCube$wildType))
 
-  } else if(is.null(dim(LarPopRatio)) ){
-    # behaviour of user supplied 1 patch worth of weights.
-    # has to be supplied as a vector, the matrix stuff makes this way too difficult
-    if(abs(sum(LarPopRatio) - 1) > sqrt(.Machine$double.eps) ) stop('LarPopRatio must sum to 1')
-    # check that columns names are in inheritance cube
-    if(is.null(names(LarPopRatio)) || !all(names(LarPopRatio) %in% inheritanceCube$genotypesID)) {
-      stop("Names for LarPopRatio must be specified as one of the genotypesID in the inheritance cube.")
-    }
-    # set all patches equal
-    pars$LarPopRatio <- matrix(data = LarPopRatio, nrow = nPatch, ncol = length(LarPopRatio),
-                                 byrow = TRUE, dimnames = list(NULL,names(LarPopRatio)) )
+  # derived parameters
+  pars$g = calcAverageGenerationTime(pars$timeJu,pars$timeAd)
 
-  } else if(dim(LarPopRatio)[1] == nPatch){
-    # behaviour if user supplies a matrix of probabilities.
-    # each row is a different patch
-    # check that all patches sum to 1
-    if(any(abs(rowSums(LarPopRatio) - 1) > sqrt(.Machine$double.eps)) ) stop('Each row of LarPopRatio must sum to 1')
-    # check that columns names are in inheritance cube
-    if(is.null(colnames(LarPopRatio)) || !all(colnames(LarPopRatio) %in% inheritanceCube$genotypesID)) {
-      stop("Column names for LarPopRatio must be specified as one of the genotypesID in the inheritance cube.")
-    }
-    # store
-    pars$LarPopRatio <- LarPopRatio
-
-  } else {
-    stop("LarPopRatio has been miss specified.\n
-         Left blank - default, all populations are the same and begin as wild-type individuals\n
-         Vector - a named vector that sums to one. All populations will be the same\n
-         Matrix - an nPatch by nGenotype matrix with column names and all rows sum to 1.
-         Specifies each population individually.")
-  }
+  pars$thetaAd = 1-pars$muAd
 
 
   # setup female initial pop ratio
@@ -190,7 +154,7 @@ parameterizeMGDrivE <- function(
     }
     # set all patches equal
     pars$AdPopRatio_F <- matrix(data = AdPopRatio_F, nrow = nPatch, ncol = length(AdPopRatio_F),
-                               byrow = TRUE, dimnames = list(NULL,names(AdPopRatio_F)) )
+                                byrow = TRUE, dimnames = list(NULL,names(AdPopRatio_F)) )
 
   } else if(dim(AdPopRatio_F)[1] == nPatch){
     # behaviour if user supplies a matrix of probabilities.
@@ -228,7 +192,7 @@ parameterizeMGDrivE <- function(
       # get index of female wild-type
       whichGeno <- grep(pattern = "Y", x = inheritanceCube$wildType, fixed = TRUE)
       # setup default matrix
-      pars$AdPopRatio_M <- matrix(data = 0, nrow = nPatch, ncol = length(inheritanceCube$wildType),
+      pars$AdPopRatio_M <- matrix(data = 1, nrow = nPatch, ncol = length(inheritanceCube$wildType),
                                   dimnames = list(NULL,inheritanceCube$wildType))
       # set all to female genotype
       pars$AdPopRatio_M[ ,whichGeno] <- 1
@@ -270,23 +234,6 @@ parameterizeMGDrivE <- function(
          Specifies each population individually.")
   }
 
-
-  # derived parameters
-  pars$g = calcAverageGenerationTime(pars$timeAq,tAd)
-  pars$genPopGrowth = calcPopulationGrowthRate(popGrowth,pars$g)
-  pars$muAq = calcLarvalStageMortalityRate(pars$genPopGrowth,muAd,beta,pars$timeAq)
-  pars$thetaAq = c("E"=calcAquaticStageSurvivalProbability(pars$muAq,tEgg),
-                   "L"=calcAquaticStageSurvivalProbability(pars$muAq,tLarva),
-                   "P"=calcAquaticStageSurvivalProbability(pars$muAq,tPupa))
-  pars$thetaAd = 1-muAd
-
-
-  # patch-specific derived parameters
-  pars$alpha = calcDensityDependentDeathRate(beta, pars$thetaAq, pars$timeAq,
-                                             AdPopEQ, pars$genPopGrowth)
-  pars$Adeq = calcAdultPopEquilibrium(pars$alpha,pars$genPopGrowth)
-
-
   # check the list
   invisible(Map(f = check, pars))
 
@@ -308,90 +255,16 @@ check <- function(x){
   }
 }
 
-#' Calculate Density-dependent Larval Mortality
-#'
-#' Calculate \eqn{\alpha}, the strength of density-dependent mortality during the
-#' larval stage, given by: \deqn{\alpha=\Bigg( \frac{1/2 * \beta * \theta_e * Ad_{eq}}{R_m-1} \Bigg) * \Bigg( \frac{1-(\theta_l / R_m)}{1-(\theta_l / R_m)^{1/T_l}} \Bigg)}
-#'
-#' @param fertility Number of eggs per oviposition for wild-type females, \eqn{\beta}
-#' @param thetaAq Vector of density-independent survival probabilities of aquatic stages, \eqn{\theta_{e}, \theta_{l}}
-#' @param thetaAd Vector of density-independent survival probabilities of adult stage, \eqn{\theta_{a}
-#' @param tAd Vector of lengths of aquatic stages, \eqn{T_{a}}
-#' @param adultPopSizeEquilibrium Adult population size at equilibrium, \eqn{Ad_{eq}}
-#' @param populationGrowthRate Population growth in absence of density-dependent mortality \eqn{R_{m}}
-#'
-calcDensityDependentDeathRate <- function(fertility, thetaAq, thetaAd, tAd,
-                                          adultPopSizeEquilibrium, populationGrowthRate){
-
-  prodA = (fertility * thetaAq[["E"]] * thetaAq[["L"]] * thetaAq[["P"]] * (adultPopSizeEquilibrium/2)) / (populationGrowthRate-1)
-  prodB_numerator = (1 - (thetaAd / populationGrowthRate))
-  prodB_denominator = (1 - ((thetaAd /populationGrowthRate)^(1/tAd)))
-
-  return(prodA*(prodB_numerator/prodB_denominator))
-}
 
 #' Calculate Average Generation Time
 #'
 #' Calculate \eqn{g}, average generation time, given by: \deqn{g=T_e+T_l+T_p+\frac{1}{\mu_{ad}}}
 #'
-#' @param stagesDuration Vector of lengths of aquatic stages, \eqn{T_{e}, T_{l}, T_{p}}
-#' @param tAd Vector of lengths of aquatic stages, \eqn{T_{a}}
+#' @param stagesDuration Vector of lengths of juvenile stages, \eqn{T_{g}, T_{n}, T_{a}}
+#' @param tAd Vector of lengths of juvenile stages, \eqn{T_{a}}
 #'
 calcAverageGenerationTime <- function(stagesDuration, tAd){
   return(sum(c(stagesDuration,tAd)))
 }
 
-#' Calculate Generational Population Growth Rate
-#'
-#' Calculate \eqn{R_{m}}, population growth in absence of density-dependent mortality,
-#' given by: \deqn{(r_{m})^{g}}
-#'
-#' @param dailyPopGrowthRate Daily population growth rate, \eqn{r_{m}}
-#' @param averageGenerationTime See \code{\link{calcAverageGenerationTime}}
-#'
-calcPopulationGrowthRate <- function(dailyPopGrowthRate, averageGenerationTime){
-  return(dailyPopGrowthRate^averageGenerationTime)
-}
 
-#' Calculate Aquatic Stage Survival Probability
-#'
-#' Calculate \eqn{\theta_{st}}, density-independent survival probability, given
-#' by: \deqn{\theta_{st}=(1-\mu_{st})^{T_{st}}}
-#'
-#' @param mortalityRate Daily mortality probability, \eqn{\mu_{st}}
-#' @param stageDuration Duration of aquatic stage, \eqn{T^{st}}
-#'
-calcAquaticStageSurvivalProbability <- function(mortalityRate, stageDuration){
-  return((1-mortalityRate)^stageDuration)
-}
-
-#' Calculate Larval Stage Mortality Rate
-#'
-#' Calculate \eqn{\mu_{l}}, the larval mortality, given by
-#' \deqn{\mu_l=1-\Bigg( \frac{R_m * \mu_{ad}}{1/2 * \beta * (1-\mu_m)} \Bigg)^{\frac{1}{T_e+T_l+T_p}}}
-#'
-#' @param generationPopGrowthRate See \code{\link{calcPopulationGrowthRate}}
-#' @param adultMortality Adult mortality rate, \eqn{\mu_{ad}}
-#' @param fertility Number of eggs per oviposition for wild-type females, \eqn{\beta}
-#' @param aquaticStagesDuration Vector of lengths of aquatic stages, \eqn{T_{e}, T_{l}, T_{p}}
-#'
-calcLarvalStageMortalityRate <- function(generationPopGrowthRate, adultMortality,
-                                         fertility, aquaticStagesDuration){
-
-  a = generationPopGrowthRate*adultMortality
-  b = (fertility/2)*(1-adultMortality)
-  c = sum(aquaticStagesDuration)
-
-  return(1-(a/b)^(1/c))
-}
-
-#' Calculate Equilibrium Larval Population
-#'
-#' Equilibrium larval population size to sustain adult population.
-#'
-#' @param alpha See \code{\link{calcDensityDependentDeathRate}}
-#' @param Rm See \code{\link{calcPopulationGrowthRate}}
-#'
-calcAdultPopEquilibrium <- function(alpha, Rm){
-  return(as.integer(round(alpha * (Rm-1))))
-  }

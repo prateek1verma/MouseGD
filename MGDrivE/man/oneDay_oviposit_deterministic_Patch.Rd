@@ -2,11 +2,11 @@
 % Please edit documentation in R/Patch-Simulation.R
 \name{oneDay_oviposit_deterministic_Patch}
 \alias{oneDay_oviposit_deterministic_Patch}
-\title{Deterministc Oviposition}
+\title{Deterministc Gestation}
 \usage{
 oneDay_oviposit_deterministic_Patch()
 }
 \description{
-Calculate the number of eggs oviposited by female mosquitoes following:
+Calculate the number of pups conceived by female mice following:
 \deqn{\overline{O(T_x)} = \sum_{j=1}^{n} \Bigg( \bigg( (\beta*\overline{s} * \overline{ \overline{Af_{[t]}}}) * \overline{\overline{\overline{Ih}}} \bigg) * \Lambda \Bigg)^{\top}_{ij}}
 }

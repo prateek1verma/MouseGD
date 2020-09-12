@@ -8,6 +8,7 @@ calcLarvalStageMortalityRate(
   generationPopGrowthRate,
   adultMortality,
   fertility,
+  litters,
   aquaticStagesDuration
 )
 }
@@ -16,7 +17,9 @@ calcLarvalStageMortalityRate(
 
 \item{adultMortality}{Adult mortality rate, \eqn{\mu_{ad}}}
 
-\item{fertility}{Number of eggs per oviposition for wild-type females, \eqn{\beta}}
+\item{fertility}{Number of pups per litter for wild-type females, \eqn{\beta}}
+
+\item{litters}{number of litters per female mouse per year}
 
 \item{aquaticStagesDuration}{Vector of lengths of aquatic stages, \eqn{T_{e}, T_{l}, T_{p}}}
 }

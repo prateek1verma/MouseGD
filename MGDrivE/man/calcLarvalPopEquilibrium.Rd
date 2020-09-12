@@ -4,12 +4,12 @@
 \alias{calcLarvalPopEquilibrium}
 \title{Calculate Equilibrium Larval Population}
 \usage{
-calcLarvalPopEquilibrium(alpha, Rm)
+calcLarvalPopEquilibrium(carryingCap, muAq)
 }
 \arguments{
-\item{alpha}{See \code{\link{calcDensityDependentDeathRate}}}
+\item{carryingCap}{See \code{\link{calcDensityDependentDeathRate}}}
 
-\item{Rm}{See \code{\link{calcPopulationGrowthRate}}}
+\item{muAq}{daily mortalities of each adolescent life stage}
 }
 \description{
 Equilibrium larval population size to sustain adult population.

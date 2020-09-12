@@ -6,10 +6,11 @@
 #    /_/    \__,_/\__/\___/_/ /_/
 #
 #   Patch Migration
-#   Marshall Lab
+#   Original Code by: Marshall Lab
 #   jared_bennett@berkeley.edu
 #   December 2019
-#
+#   MODIFIED BY ETHAN A. BROWN (26 FEBRUARY 2020)
+#   ebrown23@nd.edu
 ###############################################################################
 ###############################################################################
 # Outbound Migration

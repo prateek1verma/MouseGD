@@ -9,6 +9,6 @@ oneDay_oviposit_stochastic_Patch()
 \description{
 Calculate the number of eggs oviposited by female mosquitoes following:
 \deqn{\overline{O(T_x)} = \sum_{j=1}^{n} \Bigg( \bigg( (\beta*\overline{s} * \overline{ \overline{Af_{[t]}}}) * \overline{\overline{\overline{Ih}}} \bigg) * \Lambda  \Bigg)^{\top}_{ij}}
-The deterministic result for number of eggs is used as the mean of a Poisson-distributed
-number of actual eggs oviposited.
+The deterministic result for number of pups is used as the rate parameter of a Poisson-distributed
+number of actual pups conceived.
 }
