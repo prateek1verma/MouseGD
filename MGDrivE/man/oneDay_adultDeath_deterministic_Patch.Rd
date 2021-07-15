@@ -11,3 +11,13 @@ Daily adult survival is calculated according to \deqn{\overline{\overline{Af_{[t
 where \eqn{\mu_{ad}} corresponds to adult mortality rate and \eqn{\overline{\omega_{m/f}}}
 corresponds to genotype-specific male/female mortality effects.
 }
+\details{
+Toxcity is also included in this adult mortality process for a specified time interval
+within the simulation. Daily survival is caluclated by by \eqn{1-\mu_{tox}}. At this time,
+there is no parameter for genotype-specific toxicant susceptibility
+
+density dependent function for adults mediated by carrying capacity
+function \eqn{k/{A_{t-1} + k}} applied to each genotype in the adult
+population vectors (male and female density-dependence calculated
+separately)
+}

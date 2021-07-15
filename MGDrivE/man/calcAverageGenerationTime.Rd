@@ -7,9 +7,9 @@
 calcAverageGenerationTime(stagesDuration, tAd)
 }
 \arguments{
-\item{stagesDuration}{Vector of lengths of aquatic stages, \eqn{T_{e}, T_{l}, T_{p}}}
+\item{stagesDuration}{Vector of lengths of juvenile stages, \eqn{T_{g}, T_{n}, T_{a}}}
 
-\item{tAd}{Vector of lengths of aquatic stages, \eqn{T_{a}}}
+\item{tAd}{Vector of lengths of juvenile stages, \eqn{T_{a}}}
 }
 \description{
 Calculate \eqn{g}, average generation time, given by: \deqn{g=T_e+T_l+T_p+\frac{1}{\mu_{ad}}}

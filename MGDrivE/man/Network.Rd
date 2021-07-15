@@ -4,7 +4,9 @@
 \name{Network}
 \alias{Network}
 \title{Network Class Definition}
-\format{An \code{\link{R6Class}} generator object}
+\format{
+An \code{\link{R6Class}} generator object
+}
 \description{
 A \code{Network} class object stores all the information for a simulation on
 a defined landscape.
@@ -27,11 +29,11 @@ a defined landscape.
 
 \itemize{
 \item get_moveVar: see \code{\link{get_moveVar_Network}}
-\item get_timeAq: see \code{\link{get_timeAq_Network}}
+\item get_timeJu: see \code{\link{get_timeJu_Network}}
 \item get_beta: see \code{\link{get_beta_Network}}
 \item get_muAd: see \code{\link{get_muAd_Network}}
-\item get_muAq: see \code{\link{get_muAq_Network}}
-\item get_alpha: see \code{\link{get_alpha_Network}}
+\item get_k: see \code{\link{get_k_Network}}
+\item get_theta: see \code{\link{get_theta_Network}}
 \item get_drivecubeindex: see \code{\link{get_drivecubeindex_Network}}
 \item get_tau: see \code{\link{get_tau_Network}}
 \item get_genotypesID: see \code{\link{get_genotypesID_Network}}

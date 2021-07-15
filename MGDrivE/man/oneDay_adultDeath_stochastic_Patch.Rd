@@ -8,7 +8,18 @@ oneDay_adultDeath_stochastic_Patch()
 }
 \description{
 Daily adult survival is sampled from a binomial distribution where survival
-probability is given by \deqn{(1-\mu_{ad}) * \overline{\omega_m/f}}.
+probability is given by \deqn{1-{\mu_{ad}} * \overline{\omega_m/f}}.
 \eqn{\mu_{ad}} corresponds to adult mortality rate and \eqn{\overline{\omega_m/f}}
 corresponds to genotype-specific mortality effects.
+}
+\details{
+Toxcity is also included in this adult mortality process for a specified time interval
+within the simulation. Survival is sampled from a binomial distribution with survival
+probability given by \eqn{1-\mu_{tox}}. At this time, there is no parameter for
+genotype-specific toxicant susceptibility
+
+density dependent function for adults mediated by carrying capacity
+function \eqn{k/{A_{t-1} + k}} applied to each genotype in the adult
+population vectors (male and female density-dependence calculated
+separately)
 }

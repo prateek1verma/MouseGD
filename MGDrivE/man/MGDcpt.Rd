@@ -6,8 +6,7 @@
 \usage{
 MGDcpt(
   out_path. = out_path,
-  tpoints = tMax,
-  tMax. = tMax,
+  tPoints = 1L,
   cube. = cube,
   nrep. = nRep,
   sitesNumber. = sitesNumber
@@ -16,9 +15,7 @@ MGDcpt(
 \arguments{
 \item{out_path.}{complete file path to the output folder (where the simulation directories are located)}
 
-\item{tpoints}{numeric vector of the specific time points you are interested in}
-
-\item{tMax.}{numeric vector of the specific time points you are interested in}
+\item{tPoints}{specific time points that you are interested in (vector)}
 
 \item{cube.}{inheritance cube object (same one you used to run the model)}
 

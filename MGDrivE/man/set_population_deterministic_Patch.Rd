@@ -6,13 +6,8 @@
 \usage{
 set_population_deterministic_Patch(
   k = k,
-  larvalEQ = larvalEQ,
   adultRatioF = adultRatioF,
   adultRatioM = adultRatioM,
-  larvalRatio = larvalRatio,
-  timeAq = timeAq,
-  muAq = muAq,
-  alpha = alpha,
   muAd = muAd,
   timeAd = timeAd
 )
@@ -20,19 +15,9 @@ set_population_deterministic_Patch(
 \arguments{
 \item{k}{Carrying capacity constant}
 
-\item{larvalEQ}{Equilibrium number of larvae}
-
 \item{adultRatioF}{Genotype specific ratio for adult females}
 
 \item{adultRatioM}{Genotype specific ratio for adult males}
-
-\item{larvalRatio}{Genotype specific ratio for larvae}
-
-\item{timeAq}{Time for each aquatic stage}
-
-\item{muAq}{Aquatic death rate}
-
-\item{alpha}{Density-dependent centering parameter}
 
 \item{muAd}{daily survival of adult stage}
 

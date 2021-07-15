@@ -4,7 +4,9 @@
 \name{Patch}
 \alias{Patch}
 \title{Patch Class Definition}
-\format{An \code{\link{R6Class}} generator object}
+\format{
+An \code{\link{R6Class}} generator object
+}
 \description{
 A Patch is a single well-mixed population that is the smallest unit of simulation for MGDrivE.
 }
@@ -13,16 +15,13 @@ A Patch is a single well-mixed population that is the smallest unit of simulatio
 \itemize{
 \item patchID: integer ID of this patch
 \item genotypesID: character vector of genotypes
-\item timeAq: integer vector of length 3 specifying the length of each aquatic stage
+\item timeJu: integer vector of length 3 specifying the length of each juvenile stage
 \item numPatches: integer, total number of patches in this simulation
 \item adultEQ: integer, total adult population in this patch for the duration of the simulation
-\item larvalEQ: integer, total larval population in this patch for the duration of the simulation
-\item muAq: double vector, length 3, daily death rate for each aquatic stage
-\item alpha: double, density-dependent centering parameter, see \code{\link{parameterizeMGDrivE}}
+\item k: double, carrying capacity parameter, see \code{\link{parameterizeMGDrivE}}
 \item adultRatioF: named double vector, distribution of adult female genotypes, see \code{\link{parameterizeMGDrivE}}
 \item adultRatioM: named double vector, distribution of adult male genotypes, see \code{\link{parameterizeMGDrivE}}
-\item larvalRatio: named double vector, distribution of all aquatic genotypes, see \code{\link{parameterizeMGDrivE}}
-\item eggReleases: egg release schedule for this patch, see \code{\link{basicRepeatedReleases}}
+\item gestReleases: gestating pup release schedule for this patch, see \code{\link{basicRepeatedReleases}}
 \item maleReleases: male release schedule for this patch, see \code{\link{basicRepeatedReleases}}
 \item femaleReleases: female release schedule for this patch, see \code{\link{basicRepeatedReleases}}
 \item matedFemaleReleases: mated females release schedule for this patch, see \code{\link{basicRepeatedReleases}}
@@ -44,14 +43,14 @@ A Patch is a single well-mixed population that is the smallest unit of simulatio
 \item oneDay_migrationIn: see \code{\link{oneDay_migrationIn_Patch}}
 \item oneDay_PopDynamics: see \code{\link{oneDay_PopDynamics_Patch}}
 \item oneDay_adultD: see \code{\link{oneDay_adultDeath_deterministic_Patch}} or \code{\link{oneDay_adultDeath_stochastic_Patch}}
-\item oneDay_pupaDM: see \code{\link{oneDay_pupaDM_deterministic_Patch}} or \code{\link{oneDay_pupaDM_stochastic_Patch}}
-\item oneDay_larvaDM: see \code{\link{oneDay_larvaDM_deterministic_Patch}} or \code{\link{oneDay_larvaDM_stochastic_Patch}}
-\item oneDay_eggDM: see \code{\link{oneDay_eggDM_deterministic_Patch}} or \code{\link{oneDay_eggDM_stochastic_Patch}}
-\item oneDay_pupation: see \code{\link{oneDay_pupation_deterministic_Patch}} or \code{\link{oneDay_pupation_stochastic_Patch}}
+\item oneDay_adoDM: see \code{\link{oneDay_adoDM_deterministic_Patch}} or \code{\link{oneDay_adoDM_stochastic_Patch}}
+\item oneDay_nursingDM: see \code{\link{oneDay_nursingDM_deterministic_Patch}} or \code{\link{oneDay_nursingDM_stochastic_Patch}}
+\item oneDay_gestDM: see \code{\link{oneDay_gestDM_deterministic_Patch}} or \code{\link{oneDay_gestDM_stochastic_Patch}}
+\item oneDay_maturation: see \code{\link{oneDay_maturation_deterministic_Patch}} or \code{\link{oneDay_maturation_stochastic_Patch}}
 \item oneDay_releases: see \code{\link{oneDay_releases_Patch}}
-\item oneDay_releaseEggs: see \code{\link{oneDay_eggReleases_Patch}}
+\item oneDay_releasePups: see \code{\link{oneDay_gestReleases_Patch}}
 \item oneDay_mating: see \code{\link{oneDay_mating_deterministic_Patch}} or \code{\link{oneDay_mating_stochastic_Patch}}
-\item oneDay_layEggs: see \code{\link{oneDay_oviposit_deterministic_Patch}} or \code{\link{oneDay_oviposit_stochastic_Patch}}
+\item oneDay_layPups: see \code{\link{oneDay_oviposit_deterministic_Patch}} or \code{\link{oneDay_oviposit_stochastic_Patch}}
 }
 }
 
@@ -59,18 +58,18 @@ A Patch is a single well-mixed population that is the smallest unit of simulatio
 
 \itemize{
 \item patchID: integer ID of this patch
-\item popAquatic: matrix, nGenotype x sum(timeAquatic), holding all eggs, larva, and pupa
+\item popJuvenile: matrix, nGenotype x sum(timeJuvenile), holding all gestating pups, nursing pups, and adolescent pups
 \item popMale: vector, nGenotype x 1, holds adult males
 \item popFemale: matrix, nGenotype x nGenotype, holds mated adult females
 \item popHolder: vector, nGenotype x 1, temporary population storage
-\item popPupSex: vector, nGenotype x 1, used in stochastic pupation as another temporary population
+\item popPupSex: vector, nGenotype x 1, used in stochastic maturation as another temporary population
 \item popUnmated: vector, nGenotype x 1, holds unmated females
 \item mMig: matrix, nGenotype x nPatches, holds outbound males for migration, see \code{\link{oneDay_migrationOut_deterministic_Patch}} or \code{\link{oneDay_migrationOut_stochastic_Patch}}
 \item fMig: array, nGenotype x nGenotype x nPatches, holds outbound females for migration, see \code{\link{oneDay_migrationOut_deterministic_Patch}} or \code{\link{oneDay_migrationOut_stochastic_Patch}}
-\item popAquatict0: matrix, nGenotype x sum(timeAquatic), holding all eggs, larva, and pupa for reset, see \code{\link{reset_Patch}}
+\item popJuvenilet0: matrix, nGenotype x sum(timeJuvenile), holding all gestating pups, nursing pups, and maturation for reset, see \code{\link{reset_Patch}}
 \item popMalet0: vector, nGenotype x 1, holds adult males for reset see \code{\link{reset_Patch}}
 \item popFemalet0: matrix, nGenotype x nGenotype, holds mated adult females for reset see \code{\link{reset_Patch}}
-\item eggReleases: list of egg releases for this patch. See \code{\link{oneDay_eggReleases_Patch}}
+\item gestReleases: list of gestating pup releases for this patch. See \code{\link{oneDay_gestReleases_Patch}}
 \item maleReleases: list of adult male releases for this patch. See \code{\link{oneDay_releases_Patch}}
 \item femaleReleases: list of adult female releases for this patch. See \code{\link{oneDay_releases_Patch}}
 \item matedFemaleReleases: list of mated adult female releases for this patch. See \code{\link{oneDay_releases_Patch}}

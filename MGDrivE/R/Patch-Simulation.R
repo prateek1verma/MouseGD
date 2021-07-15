@@ -91,7 +91,7 @@ oneDay_adultDeath_deterministic_Patch <- function(){
 
 #'
 #'  density dependent function for adults mediated by carrying capacity
-#'  function \eqn{k/(A_{t-1} + k)} applied to each genotype in the adult
+#'  function \eqn{k/{A_{t-1} + k}} applied to each genotype in the adult
 #'  population vectors (male and female density-dependence calculated
 #'  separately)
 #'
@@ -139,7 +139,7 @@ oneDay_adultDeath_deterministic_Patch <- function(){
 #' Stochastic Adult Survival
 #'
 #' Daily adult survival is sampled from a binomial distribution where survival
-#' probability is given by \deqn{(1-\mu_{ad}) * \overline{\omega_m/f}}.
+#' probability is given by \deqn{1-{\mu_{ad}} * \overline{\omega_m/f}}.
 #' \eqn{\mu_{ad}} corresponds to adult mortality rate and \eqn{\overline{\omega_m/f}}
 #' corresponds to genotype-specific mortality effects.
 #'
@@ -154,7 +154,7 @@ oneDay_adultDeath_stochastic_Patch <- function(){
 
   #'
   #'  density dependent function for adults mediated by carrying capacity
-  #'  function \eqn{k/(A_{t-1} + k)} applied to each genotype in the adult
+  #'  function \eqn{k/{A_{t-1} + k}} applied to each genotype in the adult
   #'  population vectors (male and female density-dependence calculated
   #'  separately)
   #'
@@ -162,8 +162,6 @@ oneDay_adultDeath_stochastic_Patch <- function(){
   density <- ((private$NetworkPointer$get_k(ix = private$patchID)/2)/
                 (private$NetworkPointer$get_k(ix = private$patchID) + sum(private$popMale) + (sum(private$popUnmated)))) ^
     (1/private$NetworkPointer$get_theta())
-
-  #lifeM <- (1-private$NetworkPointer$get_muAd())
 
   lifeM <- (1-private$NetworkPointer$get_muAd()) * density
 
@@ -174,9 +172,6 @@ oneDay_adultDeath_stochastic_Patch <- function(){
   private$popMale[] <- rbinom(n = private$NetworkPointer$get_genotypesN(),
                               size = round(private$popMale),
                               prob = probHolderM)
-
-
-  #lifeF <- (1-private$NetworkPointer$get_muAd())
 
   lifeF <- (1-private$NetworkPointer$get_muAd()) * density
 
@@ -191,12 +186,7 @@ oneDay_adultDeath_stochastic_Patch <- function(){
 
   private$popFemale[] = private$popUnmated %o% normalise(private$popMale) #make sure the female matrix keeps up
 
-  # store adult population for later to allow for each adult to mate more than once
-  #private$popAdult[,1] = private$popMale
-  #private$popAdult[,2] = apply(private$popFemale, margin = 1, sum) #aggregates female genotype
-                                                                   #into their total abundance to
-                                                                   #sub for popUnmated instead of reset
-  #private$popUnmated = private$popAdult[,2]
+  #aggregates female genotype into their total abundance to sub for popUnmated instead of resetting after one day
 
   tNow <- private$NetworkPointer$get_tNow()
   interval = sort(private$NetworkPointer$get_toxInt())
@@ -223,7 +213,7 @@ oneDay_adultDeath_stochastic_Patch <- function(){
 ##########
 #' Deterministic Pupa Death and Maturation
 #'
-#' Daily adolescent survival is calculated according to \deqn{\overline{P_{[t-1]}} * (1-\mu_{aq})},
+#' Daily adolescent survival is calculated according to \deqn{\overline{P_{[t-1]}} * {1-\mu_{aq}}},
 #' where \eqn{\mu_{aq}} corresponds to daily non-density-dependent juvenile mortality. \cr
 #' See \code{\link{parameterizeMGDrivE}} for how these parameters are derived.
 #'
@@ -287,7 +277,7 @@ oneDay_adoDM_stochastic_Patch <- function(){
 #' Deterministic Larva Death and Maturation
 #'
 #' Calculate the number of nursing pups surviving from day to day, given by:
-#' \deqn{\overline{L_{[t-1]}} * (1-\mu_{aq})
+#' \deqn{\overline{L_{[t-1]}} * {1-\mu_{aq}}
 #' See \code{\link{parameterizeMGDrivE}} for how these parameters are derived.
 #' Maturation has no parameters, so the final day of nursing pups naturally enter the adolescent state.
 #'
@@ -307,7 +297,7 @@ oneDay_nursingDM_deterministic_Patch <- function(){
 #' Stochastic Larva Death and Maturation
 #'
 #' The daily number of nursing pups surviving is drawn from a binomial distribution, where
-#' survival probability is given by \deqn{(1-\mu_{aq})
+#' survival probability is given by \deqn{1-\mu_{aq}}
 #' See \code{\link{parameterizeMGDrivE}} for how these parameters are derived.
 #' Maturation has no parameters, so the final day of nursing pups naturally enter the adolescent state.
 #'
@@ -334,7 +324,7 @@ oneDay_nursingDM_stochastic_Patch <- function(){
 ##########
 #' Deterministic Gestating Pup Death and Maturation
 #'
-#' Daily gestating pup survival is calculated according to \deqn{\overline{E_{[t-1]}} * (1-\mu_{aq})},
+#' Daily gestating pup survival is calculated according to \deqn{\overline{E_{[t-1]}} * {1-\mu_{aq}}},
 #' where \eqn{\mu_{aq}} corresponds to daily non-density-dependent juvenile mortality.
 #' Gestating Pups transition into nursing pups at the end of \eqn{T_e}. \cr
 #' See \code{\link{parameterizeMGDrivE}} for how these parameters are derived.
@@ -380,10 +370,10 @@ oneDay_gestDM_stochastic_Patch <- function(){
 
 #' Deterministc Maturation
 #'
-#' Pupa first undergo one extra day of survival, calculated as \deqn{\overline{P_{[t-1]}} * (1-\mu_{ad})}.
+#' Pupa first undergo one extra day of survival, calculated as \deqn{\overline{P_{[t-1]}} * {1-\mu_{ad}}}.
 #' This is an artifact of the conversion from continuous to discrete time (as mentioned
 #' in the original Hancock paper this model is derived from). \cr
-#' Then, maturation into adult males is calculated as \deqn{(1-\overline{\phi}) * \overline{P_{[t]}}}
+#' Then, maturation into adult males is calculated as \deqn{{1-\overline{\phi}} * \overline{P_{[t]}}}
 #' and into adult females as \deqn{\overline{\phi} * \overline{P_{[t]}}}
 #'
 oneDay_maturation_deterministic_Patch <- function(){
@@ -407,10 +397,10 @@ oneDay_maturation_deterministic_Patch <- function(){
 #' Stochastic Maturation
 #'
 #' Pupa first undergo one extra day of survival, calculated as a binomial over
-#' \deqn{\overline{P_{[t-1]}} * (1-\mu_{ad})}.
+#' \deqn{\overline{P_{[t-1]}} * {1-\mu_{ad}}}.
 #' This is an artifact of the conversion from continuous to discrete time (as mentioned
 #' in the original Hancock paper this model is derived from). \cr
-#' Then, maturation is sampled from a binomial, where \eqn{(1-\overline{\phi})} is
+#' Then, maturation is sampled from a binomial, where \eqn{{1-\overline{\phi}}} is
 #' the genotype-specific probability of becoming male, and \eqn{\overline{\phi}}
 #' is the genotype-specific of becoming female.
 #'
@@ -622,7 +612,7 @@ oneDay_mating_stochastic_Patch <- function(){
 #'
 #'
 #' Calculate the number of pups conceived by female mice following:
-#' \deqn{\overline{O(T_x)} = \sum_{j=1}^{n} \Bigg( \bigg( (\beta*\overline{s} * \overline{ \overline{Af_{[t]}}}) * \overline{\overline{\overline{Ih}}} \bigg) * \Lambda \Bigg)^{\top}_{ij}}
+#' \deqn{\overline{O{T_x}} = \sum_{j=1}^{n} \Bigg{ \bigg{ {\beta*\overline{s} * \overline{ \overline{Af_{[t]}}}} * {\overline{\overline{\overline{Ih}}} \bigg} * \Lambda \Bigg}^{\top}_{ij}}}
 #'
 oneDay_conceive_deterministic_Patch <- function(){
 
@@ -645,7 +635,7 @@ oneDay_conceive_deterministic_Patch <- function(){
 #' Stochastic gestation
 #'
 #' Calculate the number of pups conceived by female mice following:
-#' \deqn{\overline{O(T_x)} = \sum_{j=1}^{n} \Bigg( \bigg( (\beta*\overline{s} * \overline{ \overline{Af_{[t]}}}) * \overline{\overline{\overline{Ih}}} \bigg) * \Lambda  \Bigg)^{\top}_{ij}}
+#' \deqn{\overline{O{T_x}} = \sum_{j=1}^{n} \Bigg{ \bigg{ {\beta*\overline{s} * \overline{ \overline{Af_{[t]}}}} * {\overline{\overline{\overline{Ih}}} \bigg} * \Lambda \Bigg}^{\top}_{ij}}}
 #' The deterministic result for number of pups is used as the rate parameter of a Poisson-distributed
 #' number of actual pups conceived.
 #'

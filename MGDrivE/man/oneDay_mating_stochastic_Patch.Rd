@@ -10,9 +10,8 @@ oneDay_mating_stochastic_Patch()
 Mating for each newly emerging adult female genotype is sampled from a multinomial
 distribution with probabilities equal to the adult male population vector
 multiplied by \eqn{\overline{\overline{\eta}}}, the genotype-specific
-male mating fitness. \eqn{\overline{\overline{\eta}}} corresponds to all female (rows)
+male mating fitness. \eqn{\overline{\overline{\eta}}} corresponds a number of females calculated using a
+binomial distribution, with the probability of mating for each femal equal to \eqn{litters/365} or the probability
+of a female having a litter on any given day (rows)
 and male (columns) genotypes, to perform any type of assortative mating. \cr
-If there are no adult males, the unmated females experience one day of death,
-sampled from a binomial distribution parameterized by \deqn{(1-\mu_{ad}) * \overline{\omega_f}},
-and remain unmated until tomorrow.
 }

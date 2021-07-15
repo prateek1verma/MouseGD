@@ -9,9 +9,7 @@ oneDay_mating_deterministic_Patch()
 \description{
 Mating is calculated as the outer product of newly emerging adult females and
 all-current adult males, modulated by \eqn{\overline{\overline{\eta}}}, the genotype-specific
-male mating fitness. \eqn{\overline{\overline{\eta}}} corresponds to all female (rows)
+male mating fitness. \eqn{\overline{\overline{\eta}}} corresponds to a number of females calculated from the
+average number of litters per year \eqn{litters/365} (rows)
 and male (columns) genotypes, to perform any type of assortative mating. \cr
-If there are no adult males, the unmated females experience one day of death,
-calculated as \deqn{\overline{Af_t} * (1-\mu_{ad}) * \overline{\omega_f}}, and
-remain unmated until tomorrow.
 }

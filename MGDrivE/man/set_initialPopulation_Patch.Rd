@@ -6,13 +6,8 @@
 \usage{
 set_initialPopulation_Patch(
   k = k,
-  larvalEQ = larvalEQ,
   adultRatioF = adultRatioF,
   adultRatioM = adultRatioM,
-  larvalRatio = larvalRatio,
-  timeAq = timeAq,
-  muAq = muAq,
-  alpha = alpha,
   muAd = muAd,
   timeAd = timeAd
 )
@@ -20,19 +15,9 @@ set_initialPopulation_Patch(
 \arguments{
 \item{k}{Carrying capacity constant}
 
-\item{larvalEQ}{Equilibrium number of larvae}
-
 \item{adultRatioF}{Genotype specific ratio for adult females}
 
 \item{adultRatioM}{Genotype specific ratio for adult males}
-
-\item{larvalRatio}{Genotype specific ratio for larvae}
-
-\item{timeAq}{Time for each aquatic stage}
-
-\item{muAq}{Aquatic death rate}
-
-\item{alpha}{Density-dependent centering parameter}
 
 \item{muAd}{daily survival of adult stage}
 
@@ -40,9 +25,5 @@ set_initialPopulation_Patch(
 }
 \description{
 This hidden function distributes the population at time 0 in the steady-state
-conformation. This involves finding the number of mosquitoes in each day of the
-aquatic stages, and then splitting adults into male and female. Each stage is
-appropriately split amongst the initial population genotypes (see \code{\link{parameterizeMGDrivE}}).
-It internally calls \code{\link{calcLarvalDist}} to determine the distribution
-of larvae before setting the eggs and pupa from that.
+conformation. This involves splitting adults into male and female.
 }

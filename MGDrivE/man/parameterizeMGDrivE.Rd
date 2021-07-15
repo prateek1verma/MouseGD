@@ -10,15 +10,14 @@ parameterizeMGDrivE(
   simTime,
   sampTime = 1L,
   moveVar = 1000L,
-  tEgg = 19L,
-  tLarva = 23L,
-  tPupa = 37L,
-  beta = 8L,
+  tGest = 19L,
+  tNursing = 23L,
+  tAdo = 37L,
+  beta = 6,
   litters = 7.5,
-  muAd = I(1/769),
-  popGrowth = 1.002,
+  muAd = I(1/690),
   k,
-  LarPopRatio,
+  theta = 22.4,
   AdPopRatio_F,
   AdPopRatio_M,
   inheritanceCube
@@ -37,26 +36,23 @@ parameterizeMGDrivE(
 It affects the concentration of probability in the Dirchlet simplex, small values
 lead to high variance and large values lead to low variance.}
 
-\item{tEgg}{Length of egg stage}
+\item{tGest}{Length of gestation stage}
 
-\item{tLarva}{Length of larval instar stage}
+\item{tNursing}{Length of nursing stage}
 
-\item{tPupa}{Length of pupal stage}
+\item{tAdo}{Length of adolescent stage}
 
-\item{beta}{Female egg batch size of wild-type}
+\item{beta}{Female litter size of wild-type}
 
-\item{litters}{number of litters per female mouse per year}
+\item{litters}{average number of litters per female mouse per year}
 
 \item{muAd}{Wild-type daily adult mortality (1/muAd is average wild-type lifespan)}
 
-\item{popGrowth}{Daily population growth rate (used to calculate equilibrium)}
+\item{k}{Single number or vector of adult population carrying capacity at equilibrium
+(single number implies all patches have the same population, but populations for
+individual patches can be specified with a vector)}
 
-\item{k}{Single number or vector of adult population size at equilibrium
-(single number implies all patches have the same population)}
-
-\item{LarPopRatio}{May be empty; if not, a vector gives the wildtype gene frequencies
-among larval stages at the beginning of simulation or a matrix provides different
-initial frequencies for each patch (every row is a different patch, must have nrow = nPatch)}
+\item{theta}{Shape parameter for mediating the carrying capacity for adult mice}
 
 \item{AdPopRatio_F}{May be empty; if not, a vector gives the wildtype gene frequencies
 among adult females at the beginning of simulation or a matrix provides different
@@ -71,7 +67,7 @@ initial frequencies for each patch (every row is a different patch, must have nr
 \description{
 Generate parameters for simulation on a \code{\link{Network}}.
 Parameters include: average generation time \eqn{g}, population growth rate \eqn{R_{m}},
-aquatic mortality \eqn{\mu_{Aq}}, and aquatic survival \eqn{\theta_{Aq}}, which
+juvenile mortality \eqn{\mu_{Ju}}, and juvenile survival \eqn{\theta_{Ju}}, which
 are shared between patches and calculated by \code{\link{calcAverageGenerationTime}},
 \code{\link{calcPopulationGrowthRate}}, and \code{\link{calcLarvalStageMortalityRate}}. \cr
 Patch-specific parameters \eqn{\alpha} and \eqn{L_{eq}}
