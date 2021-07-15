@@ -5,16 +5,29 @@
 #   / /___/ /_/ / /_/ /  __/
 #   \____/\__,_/_.___/\___/
 #
+#   Sox9 CRISPR-Cas9 mouse gene drive inheritance cube
+#
+#   Modified from source code of the original MarshallLab MGDrivE function:
+#   #######################################################################
 #   MGDrivE: Mosquito Gene Drive Explorer
 #   CRISPR 2 Resistance Alleles Inheritance Cube - Sex-Specific homing
 #   Héctor Sanchez, Jared Bennett, Sean Wu, John Marshall
 #   July 2017
 #   jared_bennett@berkeley.edu
 #   December 2018
-#    Modified to reflect new cutting, homing, resistance generation rates
+#   Modified to reflect new cutting, homing, resistance generation rates
+#   #######################################################################
+#
+#   MODIFIED JULY 2020 (description modified July 2021) by ETHAN A. BROWN
 #
 ###############################################################################
 
+#' This is a modification of the \code{\link{Cube-CRISPR2MF}} function from the original MGDrivE package by Sanchez et al..
+#' This cube reflects the mechanisms of the CRISPR-Cas9 Sox9 Homing Drive, as described by Prowse et al. (2017).
+#' The purpose of the Sox9 drive is to spread female sterility through *Mus musculus* populations by causing
+#' XX mice to develop male morphology (testis).
+#'
+#' ORIGINAL FUNCTION DESCRIPTION FROM MarshallLAb PACKAGE:
 #' Inheritance Cube: CRISPR (Clustered Regularly Interspaced Short Palindromic Repeats) with 2 Resistance Alleles and sex-specific genotypes
 #'
 #' This is a sex-specific version of the original cube \code{\link{cubeHomingDrive}}. It assumes that the construct
@@ -35,6 +48,8 @@
 #'
 #' @return Named list containing the inheritance cube, transition matrix, genotypes, wild-type allele,
 #' and all genotype-specific parameters.
+#'
+#' @references 27.	Prowse TAA, Cassey P, Ross JV, Pfitzner C, Wittmann TA, Thomas P. 2017. Dodging silver bullets: good CRISPR gene-drive design is critical for eradicating exotic vertebrates. Proceedings of the Royal Society B: Biological Sciences 284(1860):20170799.
 #' @export
 
 SoxHomingDrive <- function(cM = 1.0, cF = 1.0, chM = 0, crM = 0, chF = 0,

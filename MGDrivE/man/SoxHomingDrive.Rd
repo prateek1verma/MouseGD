@@ -2,7 +2,10 @@
 % Please edit documentation in R/SoxHomingDrive.R
 \name{SoxHomingDrive}
 \alias{SoxHomingDrive}
-\title{Inheritance Cube: CRISPR (Clustered Regularly Interspaced Short Palindromic Repeats) with 2 Resistance Alleles and sex-specific genotypes}
+\title{This is a modification of the \code{\link{Cube-CRISPR2MF}} function from the original MGDrivE package by Sanchez et al..
+This cube reflects the mechanisms of the CRISPR-Cas9 Sox9 Homing Drive, as described by Prowse et al. (2017).
+The purpose of the Sox9 drive is to spread female sterility through \emph{Mus musculus} populations by causing
+XX mice to develop male morphology (testis).}
 \usage{
 SoxHomingDrive(
   cM = 1,
@@ -49,6 +52,15 @@ Named list containing the inheritance cube, transition matrix, genotypes, wild-t
 and all genotype-specific parameters.
 }
 \description{
+ORIGINAL FUNCTION DESCRIPTION FROM MarshallLAb PACKAGE:
+Inheritance Cube: CRISPR (Clustered Regularly Interspaced Short Palindromic Repeats) with 2 Resistance Alleles and sex-specific genotypes
+}
+\details{
 This is a sex-specific version of the original cube \code{\link{cubeHomingDrive}}. It assumes that the construct
 is on an autosome and there can be different male/female homing rates. It also has
+}
+\references{
+\enumerate{
+\item Prowse TAA, Cassey P, Ross JV, Pfitzner C, Wittmann TA, Thomas P. 2017. Dodging silver bullets: good CRISPR gene-drive design is critical for eradicating exotic vertebrates. Proceedings of the Royal Society B: Biological Sciences 284(1860):20170799.
+}
 }
