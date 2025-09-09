@@ -78,8 +78,8 @@ oneDay_PopDynamics_Patch <- function(){
 ##########
 #' Deterministc Adult Survival
 #'
-#' Daily adult survival is calculated according to \deqn{\overline{\overline{Af_{[t-1]}}} * (1-\mu_{ad}) * \overline{\omega_{m/f}}},
-#' where \eqn{\mu_{ad}} corresponds to adult mortality rate and \eqn{\overline{\omega_{m/f}}}
+#' Daily adult survival is calculated according to \deqn{\overline{\overline{Af_{[t-1]}}} * (1-\mu_{AI}) * \overline{\omega_{m/f}}},
+#' where \eqn{\mu_{AI}} corresponds to adult mortality rate and \eqn{\overline{\omega_{m/f}}}
 #' corresponds to genotype-specific male/female mortality effects.
 #'
 #' Toxcity is also included in this adult mortality process for a specified time interval
@@ -99,7 +99,7 @@ oneDay_adultDeath_deterministic_Patch <- function(){
                (private$NetworkPointer$get_k(ix = private$patchID)  + sum(private$popMale) + sum(private$popUnmated))) ^
     (1/private$NetworkPointer$get_theta())
 
-  lifeM <- density * (1-private$NetworkPointer$get_muAd())
+  lifeM <- density * (1-private$NetworkPointer$get_muAI())
 
   # probability of survival
   probHolderM = private$NetworkPointer$get_omega() * lifeM
@@ -109,7 +109,7 @@ oneDay_adultDeath_deterministic_Patch <- function(){
 
 
 
-  lifeF <- density * (1-private$NetworkPointer$get_muAd())
+  lifeF <- density * (1-private$NetworkPointer$get_muAI())
 
   # probability of survival
   probHolderF = private$NetworkPointer$get_omega() * lifeF
@@ -139,8 +139,8 @@ oneDay_adultDeath_deterministic_Patch <- function(){
 #' Stochastic Adult Survival
 #'
 #' Daily adult survival is sampled from a binomial distribution where survival
-#' probability is given by \deqn{1-{\mu_{ad}} * \overline{\omega_m/f}}.
-#' \eqn{\mu_{ad}} corresponds to adult mortality rate and \eqn{\overline{\omega_m/f}}
+#' probability is given by \deqn{1-{\mu_{AI}} * \overline{\omega_m/f}}.
+#' \eqn{\mu_{AI}} corresponds to adult mortality rate and \eqn{\overline{\omega_m/f}}
 #' corresponds to genotype-specific mortality effects.
 #'
 #' Toxcity is also included in this adult mortality process for a specified time interval
@@ -163,7 +163,7 @@ oneDay_adultDeath_stochastic_Patch <- function(){
                 (private$NetworkPointer$get_k(ix = private$patchID) + sum(private$popMale) + (sum(private$popUnmated)))) ^
     (1/private$NetworkPointer$get_theta())
 
-  lifeM <- (1-private$NetworkPointer$get_muAd()) * density
+  lifeM <- (1-private$NetworkPointer$get_muAI()) * density
 
   # probability of survival
   probHolderM = private$NetworkPointer$get_omega() * lifeM
@@ -173,7 +173,7 @@ oneDay_adultDeath_stochastic_Patch <- function(){
                               size = round(private$popMale),
                               prob = probHolderM)
 
-  lifeF <- (1-private$NetworkPointer$get_muAd()) * density
+  lifeF <- (1-private$NetworkPointer$get_muAI()) * density
 
   # probability of survival
   probHolderF = private$NetworkPointer$get_omega() * lifeF
