@@ -16,6 +16,10 @@ parameterizeMGDrivE(
   beta = 6,
   litters = 7.5,
   muAd = I(1/690),
+  muAI = I(1/690),
+  muJI = 0,
+  muN = 0,
+  muG = 0,
   k,
   theta = 22.4,
   AdPopRatio_F,
@@ -47,6 +51,14 @@ lead to high variance and large values lead to low variance.}
 \item{litters}{average number of litters per female mouse per year}
 
 \item{muAd}{Wild-type daily adult mortality (1/muAd is average wild-type lifespan)}
+
+\item{muAI}{Daily adult mortality rate used for derived quantities}
+
+\item{muJI}{Juvenile mortality rate}
+
+\item{muN}{Nursing-stage mortality rate}
+
+\item{muG}{Gestation-stage mortality rate}
 
 \item{k}{Single number or vector of adult population carrying capacity at equilibrium
 (single number implies all patches have the same population, but populations for
