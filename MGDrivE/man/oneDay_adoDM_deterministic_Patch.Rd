@@ -7,7 +7,7 @@
 oneDay_adoDM_deterministic_Patch()
 }
 \description{
-Daily adolescent survival is calculated according to \deqn{\overline{P_{[t-1]}} * {1-\mu_{aq}}},
-where \eqn{\mu_{aq}} corresponds to daily non-density-dependent juvenile mortality. \cr
+Daily adolescent survival is calculated according to \deqn{\overline{P_{[t-1]}} * {1-\mu_{JI}}},
+where \eqn{\mu_{JI}} corresponds to adolescent mortality due to infection. \cr
 See \code{\link{parameterizeMGDrivE}} for how these parameters are derived.
 }
