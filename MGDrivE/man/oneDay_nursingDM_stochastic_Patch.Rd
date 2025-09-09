@@ -8,7 +8,7 @@ oneDay_nursingDM_stochastic_Patch()
 }
 \description{
 The daily number of nursing pups surviving is drawn from a binomial distribution, where
-survival probability is given by \deqn{1-\mu_{aq}}
+survival probability is given by \deqn{1-\mu_N}
 See \code{\link{parameterizeMGDrivE}} for how these parameters are derived.
 Maturation has no parameters, so the final day of nursing pups naturally enter the adolescent state.
 }
