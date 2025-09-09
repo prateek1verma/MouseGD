@@ -21,12 +21,15 @@
 #' @param k Carrying capacity constant
 #' @param adultRatioF Genotype specific ratio for adult females
 #' @param adultRatioM Genotype specific ratio for adult males
-#' @param muAd daily survival of adult stage
+#' @param muAI daily survival of adult stage
+#' @param muJI juvenile infection mortality parameter
+#' @param muN nursing mortality parameter
+#' @param muG gestation mortality parameter
 #' @param timeAd approximate length of adult life stage
 #'
 
 set_initialPopulation_Patch <- function(k = k, adultRatioF = adultRatioF, adultRatioM = adultRatioM,
-                                        muAd = muAd, timeAd = timeAd){
+                                        muAI = muAI, muJI = muJI, muN = muN, muG = muG, timeAd = timeAd){
 
 
   ##########
@@ -53,14 +56,17 @@ set_initialPopulation_Patch <- function(k = k, adultRatioF = adultRatioF, adultR
 #' @param k Carrying capacity constant
 #' @param adultRatioF Genotype specific ratio for adult females
 #' @param adultRatioM Genotype specific ratio for adult males
-#' @param muAd daily survival of adult stage
+#' @param muAI daily survival of adult stage
+#' @param muJI juvenile infection mortality parameter
+#' @param muN nursing mortality parameter
+#' @param muG gestation mortality parameter
 #' @param timeAd approximate length of adult life stage
 #'
 set_population_deterministic_Patch <- function(k = k, adultRatioF = adultRatioF, adultRatioM = adultRatioM,
-                                               muAd = muAd, timeAd = timeAd){
+                                               muAI = muAI, muJI = muJI, muN = muN, muG = muG, timeAd = timeAd){
 
   self$initialPopulation(k = k, adultRatioF = adultRatioF, adultRatioM = adultRatioM,
-                         muAd = muAd, timeAd = timeAd)
+                         muAI = muAI, muJI = muJI, muN = muN, muG = muG, timeAd = timeAd)
 
 }
 
@@ -72,15 +78,18 @@ set_population_deterministic_Patch <- function(k = k, adultRatioF = adultRatioF,
 #' @param k Carrying capacity constant
 #' @param adultRatioF Genotype specific ratio for adult females
 #' @param adultRatioM Genotype specific ratio for adult males
-#' @param muAd daily survival of adult stage
+#' @param muAI daily survival of adult stage
+#' @param muJI juvenile infection mortality parameter
+#' @param muN nursing mortality parameter
+#' @param muG gestation mortality parameter
 #' @param timeAd approximate length of adult life stage
 #'
 set_population_stochastic_Patch <- function(k = k, adultRatioF = adultRatioF, adultRatioM = adultRatioM,
-                                            muAd = muAd, timeAd = timeAd){
+                                            muAI = muAI, muJI = muJI, muN = muN, muG = muG, timeAd = timeAd){
 
   # set initial population
   self$initialPopulation(k = k, adultRatioF = adultRatioF, adultRatioM = adultRatioM,
-                         muAd = muAd, timeAd = timeAd)
+                         muAI = muAI, muJI = muJI, muN = muN, muG = muG, timeAd = timeAd)
 
   ##########
   # make everything an integer
