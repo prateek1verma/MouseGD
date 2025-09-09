@@ -325,42 +325,43 @@ oneDay_nursingDM_stochastic_Patch <- function(){
 # Gestating Pup
 ##########
 #' Deterministic Gestating Pup Death and Maturation
-#'
-#' Daily gestating pup survival is calculated according to \deqn{\overline{E_{[t-1]}} * {1-\mu_{aq}}},
-#' where \eqn{\mu_{aq}} corresponds to daily non-density-dependent juvenile mortality.
+#' 
+#' Daily gestating pup survival is calculated according to \deqn{\overline{E_{[t-1]}} * {1-\mu_G}},
+#' where \eqn{\mu_G} corresponds to daily gestating pup mortality.
 #' Gestating Pups transition into nursing pups at the end of \eqn{T_e}. \cr
 #' See \code{\link{parameterizeMGDrivE}} for how these parameters are derived.
-#'
+#' 
 oneDay_gestDM_deterministic_Patch <- function(){
 
   gestEnd <- private$NetworkPointer$get_timeJu(stage = 'G')
+  survG <- 1 - private$NetworkPointer$get_muG()
 
   # run loop backwards to move populations as we go
   for(i in gestEnd:1){
-    private$popJuvenile[ ,i+1] = private$popJuvenile[ ,i]
+    private$popJuvenile[ ,i+1] <- private$popJuvenile[ ,i] * survG
   } # end loop
 
 }
 
 #' Stochastic Gestating Pup Death and Maturation
-#'
-#' Daily gestating pup survival is sampled from a binomial distribution, where survival
-#' probability is given by \eqn{1-\mu_{aq}}. \eqn{\mu_{aq}} corresdponds
-#' to daily non-density-dependent juvenile mortality. \cr
+#' 
+#' Daily gestating pup survival is sampled from a binomial distribution with survival
+#' probability given by \eqn{1-\mu_G}. \eqn{\mu_G} corresponds to daily gestating pup mortality. \cr
 #' Gestating Pups transition into nursing pups at the end of \eqn{T_e}. \cr
 #' See \code{\link{parameterizeMGDrivE}} for how these parameters are derived.
-#'
+#' 
 oneDay_gestDM_stochastic_Patch <- function(){
 
   # things to reuse
   nGeno <- private$NetworkPointer$get_genotypesN()
   gestEnd <- private$NetworkPointer$get_timeJu(stage = 'G')
+  survG <- 1 - private$NetworkPointer$get_muG()
 
   # run loop backwards to move populations as we go
   for(i in gestEnd:1){
-    private$popJuvenile[ ,i+1] = rbinom(n = nGeno,
+    private$popJuvenile[ ,i+1] <- rbinom(n = nGeno,
                                        size = private$popJuvenile[ ,i],
-                                       prob = 1)
+                                       prob = survG)
   } # end loop
 
 }
