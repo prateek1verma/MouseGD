@@ -7,5 +7,8 @@
 oneDay_nursingDM_deterministic_Patch()
 }
 \description{
-
+Calculate the number of nursing pups surviving from day to day, given by:
+\deqn{\overline{L_{[t-1]}} * {1-\mu_N}}
+See \code{\link{parameterizeMGDrivE}} for how these parameters are derived.
+Maturation has no parameters, so the final day of nursing pups naturally enter the adolescent state.
 }

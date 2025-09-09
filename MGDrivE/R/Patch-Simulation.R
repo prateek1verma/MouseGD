@@ -279,7 +279,7 @@ oneDay_adoDM_stochastic_Patch <- function(){
 #' Deterministic Larva Death and Maturation
 #'
 #' Calculate the number of nursing pups surviving from day to day, given by:
-#' \deqn{\overline{L_{[t-1]}} * {1-\mu_{aq}}
+#' \deqn{\overline{L_{[t-1]}} * {1-\mu_N}}
 #' See \code{\link{parameterizeMGDrivE}} for how these parameters are derived.
 #' Maturation has no parameters, so the final day of nursing pups naturally enter the adolescent state.
 #'
@@ -287,11 +287,11 @@ oneDay_nursingDM_deterministic_Patch <- function(){
   nGeno <- private$NetworkPointer$get_genotypesN()
   nursingStart <- private$NetworkPointer$get_timeJu(stage = 'G') + 1
   nursingEnd <- private$NetworkPointer$get_timeJu(stage = 'G') + private$NetworkPointer$get_timeJu(stage = 'N')
-
+  surv <- 1 - private$NetworkPointer$get_muN()
 
   # run loop backwards to move populations as we go
   for(i in nursingEnd:nursingStart){
-    private$popJuvenile[ ,i+1] = private$popJuvenile[ ,i]
+    private$popJuvenile[ ,i+1] = private$popJuvenile[ ,i] * surv
   } # end loop
 
 }
@@ -299,7 +299,7 @@ oneDay_nursingDM_deterministic_Patch <- function(){
 #' Stochastic Larva Death and Maturation
 #'
 #' The daily number of nursing pups surviving is drawn from a binomial distribution, where
-#' survival probability is given by \deqn{1-\mu_{aq}}
+#' survival probability is given by \deqn{1-\mu_N}
 #' See \code{\link{parameterizeMGDrivE}} for how these parameters are derived.
 #' Maturation has no parameters, so the final day of nursing pups naturally enter the adolescent state.
 #'
@@ -309,13 +309,13 @@ oneDay_nursingDM_stochastic_Patch <- function(){
   nGeno <- private$NetworkPointer$get_genotypesN()
   nursingStart <- private$NetworkPointer$get_timeJu(stage = 'G') + 1
   nursingEnd <- private$NetworkPointer$get_timeJu(stage = 'G') + private$NetworkPointer$get_timeJu(stage = 'N')
-
+  surv <- 1 - private$NetworkPointer$get_muN()
 
   # run loop backwards to move populations as we go
   for(i in nursingEnd:nursingStart){
     private$popJuvenile[ ,i+1] = rbinom(n = nGeno,
                                        size = private$popJuvenile[ ,i],
-                                       prob = 1)
+                                       prob = surv)
   } # end loop
 
 }
