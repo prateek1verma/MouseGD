@@ -213,25 +213,26 @@ oneDay_adultDeath_stochastic_Patch <- function(){
 ##########
 #' Deterministic Pupa Death and Maturation
 #'
-#' Daily adolescent survival is calculated according to \deqn{\overline{P_{[t-1]}} * {1-\mu_{aq}}},
-#' where \eqn{\mu_{aq}} corresponds to daily non-density-dependent juvenile mortality. \cr
+#' Daily adolescent survival is calculated according to \deqn{\overline{P_{[t-1]}} * {1-\mu_{JI}}},
+#' where \eqn{\mu_{JI}} corresponds to adolescent mortality due to infection. \cr
 #' See \code{\link{parameterizeMGDrivE}} for how these parameters are derived.
 #'
 oneDay_adoDM_deterministic_Patch <- function(){
 
   adoStart <- private$NetworkPointer$get_timeJu(stage = 'G') + private$NetworkPointer$get_timeJu(stage = 'N') + 1
   adoEnd <- private$NetworkPointer$get_timeJu()
+  survAdo <- 1 - private$NetworkPointer$get_muJI()
 
   # Treat last day differently because the adolescent mice start to mature
   #  This does not handle the continuous to discrete time conversion artifact, see
   #  the maturation function for that.
-  private$popHolder[] <- private$popJuvenile[ ,adoEnd]
+  private$popHolder[] <- private$popJuvenile[ ,adoEnd] * survAdo
 
   # check if there are other days, then
   # run loop backwards to move populations as we go
   if((adoEnd - adoStart) > 0){
     for(i in (adoEnd-1):adoStart){
-      private$popJuvenile[ ,i+1] = private$popJuvenile[ ,i]
+      private$popJuvenile[ ,i+1] = private$popJuvenile[ ,i] * survAdo
     } # end loop
   }
 
@@ -240,23 +241,24 @@ oneDay_adoDM_deterministic_Patch <- function(){
 #' Stochastic Pupa Death and Maturation
 #'
 #' Daily adolescent survival is sampled from a binomial distribution, where survival
-#' probability is given by \deqn{1-\mu_{aq}}. \eqn{\mu_{aq}} corresponds
-#' to daily non-density-dependent juvenile mortality. \cr
+#' probability is given by \deqn{1-\mu_{JI}}. \eqn{\mu_{JI}} corresponds
+#' to adolescent mortality due to infection. \cr
 #' See \code{\link{parameterizeMGDrivE}} for how these parameters are derived.
 #'
 oneDay_adoDM_stochastic_Patch <- function(){
 
   # things to reuse
   nGeno <- private$NetworkPointer$get_genotypesN()
-    adoStart <- private$NetworkPointer$get_timeJu(stage = 'G') + private$NetworkPointer$get_timeJu(stage = 'N') + 1
+  adoStart <- private$NetworkPointer$get_timeJu(stage = 'G') + private$NetworkPointer$get_timeJu(stage = 'N') + 1
   adoEnd <- private$NetworkPointer$get_timeJu()
+  survAdo <- 1 - private$NetworkPointer$get_muJI()
 
   # Treat last day differently because the adolescent mice start to mature
   #  This does not handle the continuous to discrete time conversion artifact, see
   #  the maturation function for that.
   private$popHolder[] <- rbinom(n = nGeno,
                                 size = private$popJuvenile[ ,adoEnd],
-                                prob = 1)
+                                prob = survAdo)
 
   # check if there are other days, then
   # run loop backwards to move populations as we go
@@ -264,7 +266,7 @@ oneDay_adoDM_stochastic_Patch <- function(){
     for(i in (adoEnd-1):adoStart){
       private$popJuvenile[ ,i+1] <- rbinom(n = nGeno,
                                           size = private$popJuvenile[ ,i],
-                                          prob = 1)
+                                          prob = survAdo)
     } # end loop
   }
 

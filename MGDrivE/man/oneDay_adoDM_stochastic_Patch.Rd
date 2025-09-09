@@ -8,7 +8,7 @@ oneDay_adoDM_stochastic_Patch()
 }
 \description{
 Daily adolescent survival is sampled from a binomial distribution, where survival
-probability is given by \deqn{1-\mu_{aq}}. \eqn{\mu_{aq}} corresponds
-to daily non-density-dependent juvenile mortality. \cr
+probability is given by \deqn{1-\mu_{JI}}. \eqn{\mu_{JI}} corresponds
+to adolescent mortality due to infection. \cr
 See \code{\link{parameterizeMGDrivE}} for how these parameters are derived.
 }
