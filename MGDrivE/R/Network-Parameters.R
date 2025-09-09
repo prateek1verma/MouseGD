@@ -36,6 +36,10 @@
 #' @param tAdo Length of adolescent stage
 #' @param beta Female litter size of wild-type
 #' @param muAd Wild-type daily adult mortality (1/muAd is average wild-type lifespan)
+#' @param muAI Daily adult mortality rate used for derived quantities
+#' @param muJI Juvenile mortality rate
+#' @param muN Nursing-stage mortality rate
+#' @param muG Gestation-stage mortality rate
 #' @param k Single number or vector of adult population carrying capacity at equilibrium
 #' (single number implies all patches have the same population, but populations for
 #' individual patches can be specified with a vector)
@@ -68,6 +72,10 @@ parameterizeMGDrivE <- function(
   beta = 6,
   litters = 7.5,
   muAd = I(1/690),
+  muAI = I(1/690),
+  muJI = 0,
+  muN = 0,
+  muG = 0,
   k,
   theta = 22.4,
   AdPopRatio_F,
@@ -94,7 +102,7 @@ parameterizeMGDrivE <- function(
 
   # biological parameters
   pars$timeJu = c("G"=tGest, "N"=tNursing, "A"=tAdo)
-  pars$timeAd = 1/muAd-sum(pars$timeJu)
+  pars$timeAd = 1/muAI-sum(pars$timeJu)
   pars$beta = beta # assumes average of 7.5 pups per litter. The decimal is appropriate because it is used to
   # calculate a rate parameter (lambda) in a Poisson distribution, so the number of pups will always be an integer
                         #
@@ -103,6 +111,10 @@ parameterizeMGDrivE <- function(
 
   # initial parameters
   pars$muAd = muAd
+  pars$muAI = muAI
+  pars$muJI = muJI
+  pars$muN = muN
+  pars$muG = muG
   pars$theta = theta
   pars$k = k
   if(length(pars$k) == 1){
@@ -116,7 +128,7 @@ parameterizeMGDrivE <- function(
   # derived parameters
   pars$g = calcAverageGenerationTime(pars$timeJu,pars$timeAd)
 
-  pars$thetaAd = 1-pars$muAd
+  pars$thetaAd = 1-pars$muAI
 
 
   # setup female initial pop ratio
@@ -258,7 +270,7 @@ check <- function(x){
 
 #' Calculate Average Generation Time
 #'
-#' Calculate \eqn{g}, average generation time, given by: \deqn{g=T_e+T_l+T_p+\frac{1}{\mu_{ad}}}
+#' Calculate \eqn{g}, average generation time, given by: \deqn{g=T_e+T_l+T_p+\frac{1}{\mu_{AI}}}
 #'
 #' @param stagesDuration Vector of lengths of juvenile stages, \eqn{T_{g}, T_{n}, T_{a}}
 #' @param tAd Vector of lengths of juvenile stages, \eqn{T_{a}}

@@ -12,5 +12,5 @@ calcAverageGenerationTime(stagesDuration, tAd)
 \item{tAd}{Vector of lengths of juvenile stages, \eqn{T_{a}}}
 }
 \description{
-Calculate \eqn{g}, average generation time, given by: \deqn{g=T_e+T_l+T_p+\frac{1}{\mu_{ad}}}
+Calculate \eqn{g}, average generation time, given by: \deqn{g=T_e+T_l+T_p+\frac{1}{\mu_{AI}}}
 }
