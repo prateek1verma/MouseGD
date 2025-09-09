@@ -30,6 +30,10 @@
 #'  * numPatches: integer, total number of patches in this simulation
 #'  * adultEQ: integer, total adult population in this patch for the duration of the simulation
 #'  * k: double, carrying capacity parameter, see \code{\link{parameterizeMGDrivE}}
+#'  * muAI: additional adult mortality parameter
+#'  * muJI: juvenile infection mortality parameter
+#'  * muN: nursing mortality parameter
+#'  * muG: gestation mortality parameter
 #'  * adultRatioF: named double vector, distribution of adult female genotypes, see \code{\link{parameterizeMGDrivE}}
 #'  * adultRatioM: named double vector, distribution of adult male genotypes, see \code{\link{parameterizeMGDrivE}}
 #'  * gestReleases: gestating pup release schedule for this patch, see \code{\link{basicRepeatedReleases}}
@@ -93,7 +97,8 @@ Patch <- R6::R6Class(classname = "Patch",
                 #################################################
 
                 initialize = function(patchID, genotypesID, timeJu, timeAd, numPatches,
-                                      k, muAd, adultRatioF, adultRatioM,
+                                      k, muAd, muAI, muJI, muN, muG,
+                                      adultRatioF, adultRatioM,
                                       gestReleases = NULL,
                                       maleReleases = NULL,
                                       femaleReleases = NULL,
@@ -121,6 +126,11 @@ Patch <- R6::R6Class(classname = "Patch",
 
                   private$mMig = matrix(data=0, nrow=nGeno, ncol=numPatches)
                   private$fMig = array(data = 0, dim=c(nGeno,nGeno,numPatches))
+
+                  private$muAI = muAI
+                  private$muJI = muJI
+                  private$muN = muN
+                  private$muG = muG
 
                   # set initial population
                   self$setPopulation(k = k,
@@ -156,6 +166,11 @@ Patch <- R6::R6Class(classname = "Patch",
               popHolder = NULL,
               popPupSex = NULL, # only used in stochastic maturation function
               popUnmated = NULL,
+
+              muAI = NULL,
+              muJI = NULL,
+              muN = NULL,
+              muG = NULL,
 
               # migration
               mMig = NULL,

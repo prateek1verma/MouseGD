@@ -32,6 +32,10 @@ a defined landscape.
 \item get_timeJu: see \code{\link{get_timeJu_Network}}
 \item get_beta: see \code{\link{get_beta_Network}}
 \item get_muAd: see \code{\link{get_muAd_Network}}
+\item get_muAI: see \code{\link{get_muAI_Network}}
+\item get_muJI: see \code{\link{get_muJI_Network}}
+\item get_muN: see \code{\link{get_muN_Network}}
+\item get_muG: see \code{\link{get_muG_Network}}
 \item get_k: see \code{\link{get_k_Network}}
 \item get_theta: see \code{\link{get_theta_Network}}
 \item get_drivecubeindex: see \code{\link{get_drivecubeindex_Network}}
