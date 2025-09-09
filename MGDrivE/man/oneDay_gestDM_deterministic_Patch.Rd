@@ -7,8 +7,8 @@
 oneDay_gestDM_deterministic_Patch()
 }
 \description{
-Daily gestating pup survival is calculated according to \deqn{\overline{E_{[t-1]}} * {1-\mu_{aq}}},
-where \eqn{\mu_{aq}} corresponds to daily non-density-dependent juvenile mortality.
+Daily gestating pup survival is calculated according to \deqn{\overline{E_{[t-1]}} * {1-\mu_G}},
+where \eqn{\mu_G} corresponds to daily gestating pup mortality.
 Gestating Pups transition into nursing pups at the end of \eqn{T_e}. \cr
 See \code{\link{parameterizeMGDrivE}} for how these parameters are derived.
 }

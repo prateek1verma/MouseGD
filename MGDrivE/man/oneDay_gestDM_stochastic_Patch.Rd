@@ -7,9 +7,8 @@
 oneDay_gestDM_stochastic_Patch()
 }
 \description{
-Daily gestating pup survival is sampled from a binomial distribution, where survival
-probability is given by \eqn{1-\mu_{aq}}. \eqn{\mu_{aq}} corresdponds
-to daily non-density-dependent juvenile mortality. \cr
+Daily gestating pup survival is sampled from a binomial distribution with survival
+probability given by \eqn{1-\mu_G}. \eqn{\mu_G} corresponds to daily gestating pup mortality. \cr
 Gestating Pups transition into nursing pups at the end of \eqn{T_e}. \cr
 See \code{\link{parameterizeMGDrivE}} for how these parameters are derived.
 }
