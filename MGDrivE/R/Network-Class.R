@@ -40,6 +40,10 @@
 #'  * get_timeJu: see \code{\link{get_timeJu_Network}}
 #'  * get_beta: see \code{\link{get_beta_Network}}
 #'  * get_muAd: see \code{\link{get_muAd_Network}}
+#'  * get_muAI: see \code{\link{get_muAI_Network}}
+#'  * get_muJI: see \code{\link{get_muJI_Network}}
+#'  * get_muN: see \code{\link{get_muN_Network}}
+#'  * get_muG: see \code{\link{get_muG_Network}}
 #'  * get_k: see \code{\link{get_k_Network}}
 #'  * get_theta: see \code{\link{get_theta_Network}}
 #'  * get_drivecubeindex: see \code{\link{get_drivecubeindex_Network}}
@@ -135,6 +139,11 @@ Network <- R6::R6Class(classname = "Network",
                   private$toxMort = toxMort # estimated average toxicant-induced mortality for adult mice
                   private$toxInt = toxInt # time interval of toxicant deployment
 
+                  private$parameters$muAI = params$muAI
+                  private$parameters$muJI = params$muJI
+                  private$parameters$muN = params$muN
+                  private$parameters$muG = params$muG
+
 
 
                   # daily migration objects
@@ -170,6 +179,10 @@ Network <- R6::R6Class(classname = "Network",
                                                      numPatches = private$nPatch,
                                                      k = params$k[i],
                                                      muAd = params$muAd,
+                                                     muAI = params$muAI,
+                                                     muJI = params$muJI,
+                                                     muN = params$muN,
+                                                     muG = params$muG,
                                                      adultRatioF = params$AdPopRatio_F[i, ],
                                                      adultRatioM = params$AdPopRatio_M[i, ],
                                                      gestReleases = patchReleases[[i]]$gestReleases,
@@ -293,6 +306,46 @@ get_muAd_Network <- function(){return(private$parameters$muAd)}
 
 Network$set(which = "public",name = "get_muAd",
   value = get_muAd_Network,overwrite = TRUE
+)
+
+#' Get muAI
+#'
+#' Return adult survival adjustment \code{muAI}
+#'
+get_muAI_Network <- function(){return(private$parameters$muAI)}
+
+Network$set(which = "public",name = "get_muAI",
+            value = get_muAI_Network,overwrite = TRUE
+)
+
+#' Get muJI
+#'
+#' Return juvenile infection mortality \code{muJI}
+#'
+get_muJI_Network <- function(){return(private$parameters$muJI)}
+
+Network$set(which = "public",name = "get_muJI",
+            value = get_muJI_Network,overwrite = TRUE
+)
+
+#' Get muN
+#'
+#' Return nursing mortality \code{muN}
+#'
+get_muN_Network <- function(){return(private$parameters$muN)}
+
+Network$set(which = "public",name = "get_muN",
+            value = get_muN_Network,overwrite = TRUE
+)
+
+#' Get muG
+#'
+#' Return gestation mortality \code{muG}
+#'
+get_muG_Network <- function(){return(private$parameters$muG)}
+
+Network$set(which = "public",name = "get_muG",
+            value = get_muG_Network,overwrite = TRUE
 )
 
 #' Get timeAd

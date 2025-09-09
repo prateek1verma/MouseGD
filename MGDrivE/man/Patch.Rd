@@ -19,6 +19,10 @@ A Patch is a single well-mixed population that is the smallest unit of simulatio
 \item numPatches: integer, total number of patches in this simulation
 \item adultEQ: integer, total adult population in this patch for the duration of the simulation
 \item k: double, carrying capacity parameter, see \code{\link{parameterizeMGDrivE}}
+\item muAI: additional adult mortality parameter
+\item muJI: juvenile infection mortality parameter
+\item muN: nursing mortality parameter
+\item muG: gestation mortality parameter
 \item adultRatioF: named double vector, distribution of adult female genotypes, see \code{\link{parameterizeMGDrivE}}
 \item adultRatioM: named double vector, distribution of adult male genotypes, see \code{\link{parameterizeMGDrivE}}
 \item gestReleases: gestating pup release schedule for this patch, see \code{\link{basicRepeatedReleases}}
