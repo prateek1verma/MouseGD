@@ -97,7 +97,7 @@ Patch <- R6::R6Class(classname = "Patch",
                 #################################################
 
                 initialize = function(patchID, genotypesID, timeJu, timeAd, numPatches,
-                                      k, muAd, muAI, muJI, muN, muG,
+                                      k, muAI, muJI, muN, muG,
                                       adultRatioF, adultRatioM,
                                       gestReleases = NULL,
                                       maleReleases = NULL,
@@ -136,8 +136,11 @@ Patch <- R6::R6Class(classname = "Patch",
                   self$setPopulation(k = k,
                                      adultRatioF = adultRatioF,
                                      adultRatioM = adultRatioM,
-                                     timeAd = timeAd,
-                                     muAd = muAd)
+                                     muAI = muAI,
+                                     muJI = muJI,
+                                     muN = muN,
+                                     muG = muG,
+                                     timeAd = timeAd)
 
                   # store reset populations
                   private$popJuvenilet0 = private$popJuvenile

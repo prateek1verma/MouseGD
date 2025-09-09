@@ -8,7 +8,10 @@ set_population_deterministic_Patch(
   k = k,
   adultRatioF = adultRatioF,
   adultRatioM = adultRatioM,
-  muAd = muAd,
+  muAI = muAI,
+  muJI = muJI,
+  muN = muN,
+  muG = muG,
   timeAd = timeAd
 )
 }
@@ -19,7 +22,13 @@ set_population_deterministic_Patch(
 
 \item{adultRatioM}{Genotype specific ratio for adult males}
 
-\item{muAd}{daily survival of adult stage}
+\item{muAI}{daily survival of adult stage}
+
+\item{muJI}{juvenile infection mortality parameter}
+
+\item{muN}{nursing mortality parameter}
+
+\item{muG}{gestation mortality parameter}
 
 \item{timeAd}{approximate length of adult life stage}
 }
