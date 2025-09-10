@@ -7,8 +7,6 @@ devtools::install("~/Documents/GitHub/MouseGD/MGDrivEmouse2")
 
 # Then load it
 library(MGDrivEmouse2)
-
-
 library(BBmisc)
 
 
@@ -41,7 +39,7 @@ folderNames <- file.path(outFolder,
                          formatC(x = 1:nRep, width = 3, format = "d", flag = "0"))
 
 # biological parameters
-bioParameters <- list(betaK= 6, litters = 7.5, tGest=19, tNursing=23, tAdo=37, muAI = (1/690), theta = 22.4)
+bioParameters <- list(betaK= 6, litters = 7.5, tGest=19, tNursing=23, tAdo=37, muAI = (1/690), muJI = 0, muN = 0, muG = 0, theta = 22.4)
 
 
 sitesNumber <- 2 # number of patches
