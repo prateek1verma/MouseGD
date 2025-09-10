@@ -3,7 +3,7 @@ gc()
 save.image()  # overwrites .RData with empty workspace
 
 # Install from local folder (path to the repo)
-devtools::install("~/Documents/GitHub/MouseGD/MGDrivEmouse2")
+# devtools::install("~/Documents/GitHub/MouseGD/MGDrivEmouse2")
 
 # Then load it
 library(MGDrivEmouse2)
@@ -42,6 +42,18 @@ folderNames <- file.path(outFolder,
 # bioParameters <- list(betaK= 6, litters = 7.5, tGest=19, tNursing=23, tAdo=37, muAI = (1/690), muJI = 0, muN = 0, muG = 0, theta = 22.4)
 
 # biological parameters (including density-independent mortality rates)
+# bioParameters <- list(betaK  = 6,
+#                       litters = 7.5,
+#                       tGest = 19,
+#                       tNursing = 23,
+#                       tAdo = 37,
+#                       muAd = 1/690,
+#                       muAI = 1/690,
+#                       muJI = 0.005, # Assuming 85% survival over 37 days
+#                       muN  = 0.012, # Assuming 75% survival over 23 days
+#                       muG  = 0.0028, # Assuming 95% survival over 19 days
+#                      theta = 22.4)
+
 bioParameters <- list(betaK  = 6,
                       litters = 7.5,
                       tGest = 19,
@@ -49,9 +61,9 @@ bioParameters <- list(betaK  = 6,
                       tAdo = 37,
                       muAd = 1/690,
                       muAI = 1/690,
-                      muJI = 0.005, # Assuming 85% survival over 37 days
-                      muN  = 0.012, # Assuming 75% survival over 23 days
-                      muG  = 0.0028, # Assuming 95% survival over 19 days
+                      muJI = 0.001, # Assuming 85% survival over 37 days
+                      muN  = 0.001, # Assuming 75% survival over 23 days
+                      muG  = 0.001, # Assuming 95% survival over 19 days
                       theta = 22.4)
 
 sitesNumber <- 2 # number of patches
