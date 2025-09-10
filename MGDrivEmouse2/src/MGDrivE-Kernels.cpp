@@ -47,7 +47,7 @@ inline double dtruncExp(double x, double r, double a, double b){
 
 //' Calculate Lognormal Stochastic Matrix
 //'
-//' Given a distance matrix from \code{\link[MGDrivE]{calcVinEll}},
+//' Given a distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}},
 //' calculate a stochastic matrix where one step movement probabilities follow a lognormal density.
 //'
 //' The distribution and density functions for the lognormal kernel are given below:
@@ -59,7 +59,7 @@ inline double dtruncExp(double x, double r, double a, double b){
 //' }
 //' where \eqn{\mu} is the mean on the log scale, and \eqn{\sigma} is the standard deviation on the log scale.
 //'
-//' @param distMat Distance matrix from \code{\link[MGDrivE]{calcVinEll}}
+//' @param distMat Distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}
 //' @param meanlog Log mean of \code{\link[stats]{Lognormal}} distribution
 //' @param sdlog Log standard deviation of \code{\link[stats]{Lognormal}} distribution
 //'
@@ -100,7 +100,7 @@ Rcpp::NumericMatrix calcLognormalKernel(const Rcpp::NumericMatrix& distMat,
 
 //' Calculate Gamma Stochastic Matrix
 //'
-//' Given a distance matrix from \code{\link[MGDrivE]{calcVinEll}}, calculate a
+//' Given a distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}, calculate a
 //' stochastic matrix where one step movement probabilities follow a gamma density.
 //'
 //' The distribution and density functions for the gamma kernel are given below:
@@ -113,7 +113,7 @@ Rcpp::NumericMatrix calcLognormalKernel(const Rcpp::NumericMatrix& distMat,
 //' where \eqn{\Gamma(\alpha)} is the Gamma function, \eqn{\gamma(\alpha,\beta x)} is hte lower incomplete
 //' gamma function, and \eqn{\alpha,\beta} are the shape and rate parameters, respectively.
 //'
-//' @param distMat Distance matrix from \code{\link[MGDrivE]{calcVinEll}}
+//' @param distMat Distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}
 //' @param shape Shape parameter of \code{\link[stats]{GammaDist}} distribution
 //' @param rate Rate parameter of \code{\link[stats]{GammaDist}} distribution
 //'
@@ -154,7 +154,7 @@ Rcpp::NumericMatrix calcGammaKernel(const Rcpp::NumericMatrix& distMat,
 
 //' Calculate Exponential Stochastic Matrix
 //'
-//' Given a distance matrix from \code{\link[MGDrivE]{calcVinEll}}, calculate a
+//' Given a distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}, calculate a
 //' stochastic matrix where one step movement probabilities follow an exponential density.
 //'
 //' The distribution and density functions for the exponential kernel are given below:
@@ -166,7 +166,7 @@ Rcpp::NumericMatrix calcGammaKernel(const Rcpp::NumericMatrix& distMat,
 //' }
 //' where \eqn{\lambda} is the rate parameter of the exponential distribution.
 //'
-//' @param distMat Distance matrix from \code{\link[MGDrivE]{calcVinEll}}
+//' @param distMat Distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}
 //' @param rate Rate parameter of \code{\link[stats]{Exponential}} distribution
 //'
 //' @examples
@@ -206,13 +206,13 @@ Rcpp::NumericMatrix calcExpKernel(const Rcpp::NumericMatrix& distMat, const doub
 
 //' Calculate Zero-inflated Exponential Stochastic Matrix
 //'
-//' Given a distance matrix from \code{\link[MGDrivE]{calcVinEll}}, calculate a
+//' Given a distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}, calculate a
 //' stochastic matrix where one step movement probabilities follow an zero-inflated
 //' exponential density with a point mass at zero. The point mass at zero represents
 //' the first stage of a two-stage process, where mosquitoes decide to stay at
 //' their current node or leave anywhere. This parameter can be calculated from
 //' lifetime probabilities to stay at the current node with the helper function
-//' \code{\link[MGDrivE]{calcZeroInflation}}.
+//' \code{\link[MGDrivEmouse2]{calcZeroInflation}}.
 //'
 //' If a mosquito leaves its current node, with probability \eqn{1-p_{0}}, it
 //' then chooses a destination node according to a standard exponential density
@@ -229,7 +229,7 @@ Rcpp::NumericMatrix calcExpKernel(const Rcpp::NumericMatrix& distMat, const doub
 //' \eqn{\theta(x)} is the Heaviside step function and \eqn{\delta(x)} is the
 //' Dirac delta function.
 //'
-//' @param distMat Distance matrix from \code{\link[MGDrivE]{calcVinEll}}
+//' @param distMat Distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}
 //' @param rate Rate parameter of \code{\link[stats]{Exponential}} distribution
 //' @param p0 Point mass at zero
 //'

@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // rDirichlet
 NumericVector rDirichlet(const NumericVector& migrationPoint);
-RcppExport SEXP _MGDrivE_rDirichlet(SEXP migrationPointSEXP) {
+RcppExport SEXP _MGDrivEmouse2_rDirichlet(SEXP migrationPointSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -18,7 +18,7 @@ END_RCPP
 }
 // quantileC
 NumericMatrix quantileC(const IntegerMatrix& Trials, const NumericVector& Probs);
-RcppExport SEXP _MGDrivE_quantileC(SEXP TrialsSEXP, SEXP ProbsSEXP) {
+RcppExport SEXP _MGDrivEmouse2_quantileC(SEXP TrialsSEXP, SEXP ProbsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -30,7 +30,7 @@ END_RCPP
 }
 // calcCos
 Rcpp::NumericMatrix calcCos(const Rcpp::NumericMatrix& latLongs, const double& r);
-RcppExport SEXP _MGDrivE_calcCos(SEXP latLongsSEXP, SEXP rSEXP) {
+RcppExport SEXP _MGDrivEmouse2_calcCos(SEXP latLongsSEXP, SEXP rSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -42,7 +42,7 @@ END_RCPP
 }
 // calcHaversine
 Rcpp::NumericMatrix calcHaversine(const Rcpp::NumericMatrix& latLongs, const double& r);
-RcppExport SEXP _MGDrivE_calcHaversine(SEXP latLongsSEXP, SEXP rSEXP) {
+RcppExport SEXP _MGDrivEmouse2_calcHaversine(SEXP latLongsSEXP, SEXP rSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -54,7 +54,7 @@ END_RCPP
 }
 // calcVinSph
 Rcpp::NumericMatrix calcVinSph(const Rcpp::NumericMatrix& latLongs, const double& r);
-RcppExport SEXP _MGDrivE_calcVinSph(SEXP latLongsSEXP, SEXP rSEXP) {
+RcppExport SEXP _MGDrivEmouse2_calcVinSph(SEXP latLongsSEXP, SEXP rSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -66,7 +66,7 @@ END_RCPP
 }
 // calcVinEll
 Rcpp::NumericMatrix calcVinEll(const Rcpp::NumericMatrix& latLongs, const double& a, const double& b, const double& f, const double& eps, const double& iter);
-RcppExport SEXP _MGDrivE_calcVinEll(SEXP latLongsSEXP, SEXP aSEXP, SEXP bSEXP, SEXP fSEXP, SEXP epsSEXP, SEXP iterSEXP) {
+RcppExport SEXP _MGDrivEmouse2_calcVinEll(SEXP latLongsSEXP, SEXP aSEXP, SEXP bSEXP, SEXP fSEXP, SEXP epsSEXP, SEXP iterSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -82,7 +82,7 @@ END_RCPP
 }
 // calcLognormalKernel
 Rcpp::NumericMatrix calcLognormalKernel(const Rcpp::NumericMatrix& distMat, const double& meanlog, const double& sdlog);
-RcppExport SEXP _MGDrivE_calcLognormalKernel(SEXP distMatSEXP, SEXP meanlogSEXP, SEXP sdlogSEXP) {
+RcppExport SEXP _MGDrivEmouse2_calcLognormalKernel(SEXP distMatSEXP, SEXP meanlogSEXP, SEXP sdlogSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -95,7 +95,7 @@ END_RCPP
 }
 // calcGammaKernel
 Rcpp::NumericMatrix calcGammaKernel(const Rcpp::NumericMatrix& distMat, const double& shape, const double& rate);
-RcppExport SEXP _MGDrivE_calcGammaKernel(SEXP distMatSEXP, SEXP shapeSEXP, SEXP rateSEXP) {
+RcppExport SEXP _MGDrivEmouse2_calcGammaKernel(SEXP distMatSEXP, SEXP shapeSEXP, SEXP rateSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -108,7 +108,7 @@ END_RCPP
 }
 // calcExpKernel
 Rcpp::NumericMatrix calcExpKernel(const Rcpp::NumericMatrix& distMat, const double& rate);
-RcppExport SEXP _MGDrivE_calcExpKernel(SEXP distMatSEXP, SEXP rateSEXP) {
+RcppExport SEXP _MGDrivEmouse2_calcExpKernel(SEXP distMatSEXP, SEXP rateSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -120,7 +120,7 @@ END_RCPP
 }
 // calcHurdleExpKernel
 Rcpp::NumericMatrix calcHurdleExpKernel(const Rcpp::NumericMatrix& distMat, const double& rate, const double& p0);
-RcppExport SEXP _MGDrivE_calcHurdleExpKernel(SEXP distMatSEXP, SEXP rateSEXP, SEXP p0SEXP) {
+RcppExport SEXP _MGDrivEmouse2_calcHurdleExpKernel(SEXP distMatSEXP, SEXP rateSEXP, SEXP p0SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -133,20 +133,20 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_MGDrivE_rDirichlet", (DL_FUNC) &_MGDrivE_rDirichlet, 1},
-    {"_MGDrivE_quantileC", (DL_FUNC) &_MGDrivE_quantileC, 2},
-    {"_MGDrivE_calcCos", (DL_FUNC) &_MGDrivE_calcCos, 2},
-    {"_MGDrivE_calcHaversine", (DL_FUNC) &_MGDrivE_calcHaversine, 2},
-    {"_MGDrivE_calcVinSph", (DL_FUNC) &_MGDrivE_calcVinSph, 2},
-    {"_MGDrivE_calcVinEll", (DL_FUNC) &_MGDrivE_calcVinEll, 6},
-    {"_MGDrivE_calcLognormalKernel", (DL_FUNC) &_MGDrivE_calcLognormalKernel, 3},
-    {"_MGDrivE_calcGammaKernel", (DL_FUNC) &_MGDrivE_calcGammaKernel, 3},
-    {"_MGDrivE_calcExpKernel", (DL_FUNC) &_MGDrivE_calcExpKernel, 2},
-    {"_MGDrivE_calcHurdleExpKernel", (DL_FUNC) &_MGDrivE_calcHurdleExpKernel, 3},
+    {"_MGDrivEmouse2_rDirichlet", (DL_FUNC) &_MGDrivEmouse2_rDirichlet, 1},
+    {"_MGDrivEmouse2_quantileC", (DL_FUNC) &_MGDrivEmouse2_quantileC, 2},
+    {"_MGDrivEmouse2_calcCos", (DL_FUNC) &_MGDrivEmouse2_calcCos, 2},
+    {"_MGDrivEmouse2_calcHaversine", (DL_FUNC) &_MGDrivEmouse2_calcHaversine, 2},
+    {"_MGDrivEmouse2_calcVinSph", (DL_FUNC) &_MGDrivEmouse2_calcVinSph, 2},
+    {"_MGDrivEmouse2_calcVinEll", (DL_FUNC) &_MGDrivEmouse2_calcVinEll, 6},
+    {"_MGDrivEmouse2_calcLognormalKernel", (DL_FUNC) &_MGDrivEmouse2_calcLognormalKernel, 3},
+    {"_MGDrivEmouse2_calcGammaKernel", (DL_FUNC) &_MGDrivEmouse2_calcGammaKernel, 3},
+    {"_MGDrivEmouse2_calcExpKernel", (DL_FUNC) &_MGDrivEmouse2_calcExpKernel, 2},
+    {"_MGDrivEmouse2_calcHurdleExpKernel", (DL_FUNC) &_MGDrivEmouse2_calcHurdleExpKernel, 3},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_MGDrivE(DllInfo *dll) {
+RcppExport void R_init_MGDrivEmouse2(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

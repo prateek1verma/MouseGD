@@ -1,9 +1,9 @@
 .onAttach <- function(libname, pkgname) {
-  packageStartupMessage("Loading MGDrivE: MOUSE Gene Drive Explorer")
+  packageStartupMessage("Loading MGDrivEmouse2: MOUSE Gene Drive Explorer")
 }
 
 .onUnload <- function (libpath) {
-  library.dynam.unload("MGDrivE", libpath)
+  library.dynam.unload("MGDrivEmouse2", libpath)
 }
 
 #' @importFrom utils globalVariables
