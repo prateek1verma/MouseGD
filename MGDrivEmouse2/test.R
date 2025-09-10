@@ -5,13 +5,8 @@ save.image()  # overwrites .RData with empty workspace
 # Install from local folder (path to the repo)
 # devtools::install("~/Documents/GitHub/MouseGD/MGDrivEmouse2")
 
-remove.packages("MGDrivEmouse2")
-pkgbuild::clean_dll("~/Documents/GitHub/MouseGD/MGDrivEmouse2")
-system("rm -rf /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/MGDrivEmouse2/R/MGDrivEmouse2.rdb")
-system("rm -rf /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/MGDrivEmouse2")
-
-devtools::document("~/Documents/GitHub/MouseGD/MGDrivEmouse2")
-devtools::install("~/Documents/GitHub/MouseGD/MGDrivEmouse2", clean = TRUE)
+# devtools::document("~/Documents/GitHub/MouseGD/MGDrivEmouse2")
+# devtools::install("~/Documents/GitHub/MouseGD/MGDrivEmouse2", clean = TRUE)
 
 # Then load it
 library(MGDrivEmouse2)
