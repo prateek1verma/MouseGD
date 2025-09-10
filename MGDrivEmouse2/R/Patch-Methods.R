@@ -45,6 +45,69 @@ set_initialPopulation_Patch <- function(k = k, adultRatioF = adultRatioF, adultR
   private$popUnmated[names(adultRatioF)] = adultRatioF * k/2
   private$popFemale = private$popUnmated %o% normalise(private$popMale)
 
+  ##########
+  # set juvenile population breakdown
+  ##########
+  B <- muAI * k
+
+  timeJu <- try(get("timeJu", inherits = TRUE), silent = TRUE)
+  if(inherits(timeJu, "try-error")){
+    timeJu <- c("G" = 0L, "N" = 0L, "A" = 0L)
+  }
+
+  tG <- as.integer(timeJu["G"])
+  tN <- as.integer(timeJu["N"])
+  tA <- as.integer(timeJu["A"])
+
+  survA <- 1 - muJI
+  survN <- 1 - muN
+  survG <- 1 - muG
+
+  nCols <- ncol(private$popJuvenile)
+  aStart <- tG + tN + 1L
+  aEnd <- tG + tN + tA
+  nStart <- tG + 1L
+  nEnd <- tG + tN
+
+  for(g in names(private$popMale)){
+    Bg <- B * (adultRatioF[g] + adultRatioM[g]) / 2
+    pop_vec <- numeric(nCols)
+
+    # adolescent stage
+    if(tA > 0){
+      pop_vec[aEnd] <- Bg / survA
+      if(tA > 1){
+        for(i in (aEnd-1L):aStart){
+          pop_vec[i] <- pop_vec[i+1L] / survA
+        }
+      }
+    }
+
+    # nursing stage
+    if(tN > 0){
+      pop_vec[nEnd] <- pop_vec[aStart] / survN
+      if(tN > 1){
+        for(i in (nEnd-1L):nStart){
+          pop_vec[i] <- pop_vec[i+1L] / survN
+        }
+      }
+    }
+
+    # gestation stage
+    if(tG > 0){
+      pop_vec[tG] <- pop_vec[nStart] / survG
+      if(tG > 1){
+        for(i in (tG-1L):1L){
+          pop_vec[i] <- pop_vec[i+1L] / survG
+        }
+      }
+    }
+
+    private$popJuvenile[g, ] <- pop_vec
+  }
+
+  private$popJuvenilet0 = private$popJuvenile
+
 
 }
 
