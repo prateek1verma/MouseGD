@@ -9,7 +9,7 @@
 #' @param migrationPoint Vector of weights for draws. Must be positive.
 #'
 rDirichlet <- function(migrationPoint) {
-    .Call('_MGDrivE_rDirichlet', PACKAGE = 'MGDrivE', migrationPoint)
+    .Call('_MGDrivEmouse2_rDirichlet', PACKAGE = 'MGDrivEmouse2', migrationPoint)
 }
 
 #' Quantiles Function
@@ -29,7 +29,7 @@ rDirichlet <- function(migrationPoint) {
 #' @return Numeric Matrix
 #'
 quantileC <- function(Trials, Probs) {
-    .Call('_MGDrivE_quantileC', PACKAGE = 'MGDrivE', Trials, Probs)
+    .Call('_MGDrivEmouse2_quantileC', PACKAGE = 'MGDrivEmouse2', Trials, Probs)
 }
 
 #' Calculate Geodesic Distance - Cosine Method
@@ -49,7 +49,7 @@ quantileC <- function(Trials, Probs) {
 #'
 #' @export
 calcCos <- function(latLongs, r = 6378137) {
-    .Call('_MGDrivE_calcCos', PACKAGE = 'MGDrivE', latLongs, r)
+    .Call('_MGDrivEmouse2_calcCos', PACKAGE = 'MGDrivEmouse2', latLongs, r)
 }
 
 #' Calculate Geodesic Distance - Haversine Method
@@ -69,7 +69,7 @@ calcCos <- function(latLongs, r = 6378137) {
 #'
 #' @export
 calcHaversine <- function(latLongs, r = 6378137) {
-    .Call('_MGDrivE_calcHaversine', PACKAGE = 'MGDrivE', latLongs, r)
+    .Call('_MGDrivEmouse2_calcHaversine', PACKAGE = 'MGDrivEmouse2', latLongs, r)
 }
 
 #' Calculate Geodesic Distance - Vincenty Sphere Method
@@ -89,7 +89,7 @@ calcHaversine <- function(latLongs, r = 6378137) {
 #'
 #' @export
 calcVinSph <- function(latLongs, r = 6378137) {
-    .Call('_MGDrivE_calcVinSph', PACKAGE = 'MGDrivE', latLongs, r)
+    .Call('_MGDrivEmouse2_calcVinSph', PACKAGE = 'MGDrivEmouse2', latLongs, r)
 }
 
 #' Calculate Geodesic Distance - Vincenty Ellipsoid Method
@@ -113,12 +113,12 @@ calcVinSph <- function(latLongs, r = 6378137) {
 #'
 #' @export
 calcVinEll <- function(latLongs, a = 6378137, b = 6356752.3142, f = 1.0/298.257223563, eps = 1e-12, iter = 100) {
-    .Call('_MGDrivE_calcVinEll', PACKAGE = 'MGDrivE', latLongs, a, b, f, eps, iter)
+    .Call('_MGDrivEmouse2_calcVinEll', PACKAGE = 'MGDrivEmouse2', latLongs, a, b, f, eps, iter)
 }
 
 #' Calculate Lognormal Stochastic Matrix
 #'
-#' Given a distance matrix from \code{\link[MGDrivE]{calcVinEll}},
+#' Given a distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}},
 #' calculate a stochastic matrix where one step movement probabilities follow a lognormal density.
 #'
 #' The distribution and density functions for the lognormal kernel are given below:
@@ -130,7 +130,7 @@ calcVinEll <- function(latLongs, a = 6378137, b = 6356752.3142, f = 1.0/298.2572
 #' }
 #' where \eqn{\mu} is the mean on the log scale, and \eqn{\sigma} is the standard deviation on the log scale.
 #'
-#' @param distMat Distance matrix from \code{\link[MGDrivE]{calcVinEll}}
+#' @param distMat Distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}
 #' @param meanlog Log mean of \code{\link[stats]{Lognormal}} distribution
 #' @param sdlog Log standard deviation of \code{\link[stats]{Lognormal}} distribution
 #'
@@ -149,12 +149,12 @@ calcVinEll <- function(latLongs, a = 6378137, b = 6356752.3142, f = 1.0/298.2572
 #'
 #' @export
 calcLognormalKernel <- function(distMat, meanlog, sdlog) {
-    .Call('_MGDrivE_calcLognormalKernel', PACKAGE = 'MGDrivE', distMat, meanlog, sdlog)
+    .Call('_MGDrivEmouse2_calcLognormalKernel', PACKAGE = 'MGDrivEmouse2', distMat, meanlog, sdlog)
 }
 
 #' Calculate Gamma Stochastic Matrix
 #'
-#' Given a distance matrix from \code{\link[MGDrivE]{calcVinEll}}, calculate a
+#' Given a distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}, calculate a
 #' stochastic matrix where one step movement probabilities follow a gamma density.
 #'
 #' The distribution and density functions for the gamma kernel are given below:
@@ -167,7 +167,7 @@ calcLognormalKernel <- function(distMat, meanlog, sdlog) {
 #' where \eqn{\Gamma(\alpha)} is the Gamma function, \eqn{\gamma(\alpha,\beta x)} is hte lower incomplete
 #' gamma function, and \eqn{\alpha,\beta} are the shape and rate parameters, respectively.
 #'
-#' @param distMat Distance matrix from \code{\link[MGDrivE]{calcVinEll}}
+#' @param distMat Distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}
 #' @param shape Shape parameter of \code{\link[stats]{GammaDist}} distribution
 #' @param rate Rate parameter of \code{\link[stats]{GammaDist}} distribution
 #'
@@ -186,12 +186,12 @@ calcLognormalKernel <- function(distMat, meanlog, sdlog) {
 #'
 #' @export
 calcGammaKernel <- function(distMat, shape, rate) {
-    .Call('_MGDrivE_calcGammaKernel', PACKAGE = 'MGDrivE', distMat, shape, rate)
+    .Call('_MGDrivEmouse2_calcGammaKernel', PACKAGE = 'MGDrivEmouse2', distMat, shape, rate)
 }
 
 #' Calculate Exponential Stochastic Matrix
 #'
-#' Given a distance matrix from \code{\link[MGDrivE]{calcVinEll}}, calculate a
+#' Given a distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}, calculate a
 #' stochastic matrix where one step movement probabilities follow an exponential density.
 #'
 #' The distribution and density functions for the exponential kernel are given below:
@@ -203,7 +203,7 @@ calcGammaKernel <- function(distMat, shape, rate) {
 #' }
 #' where \eqn{\lambda} is the rate parameter of the exponential distribution.
 #'
-#' @param distMat Distance matrix from \code{\link[MGDrivE]{calcVinEll}}
+#' @param distMat Distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}
 #' @param rate Rate parameter of \code{\link[stats]{Exponential}} distribution
 #'
 #' @examples
@@ -221,18 +221,18 @@ calcGammaKernel <- function(distMat, shape, rate) {
 #'
 #' @export
 calcExpKernel <- function(distMat, rate) {
-    .Call('_MGDrivE_calcExpKernel', PACKAGE = 'MGDrivE', distMat, rate)
+    .Call('_MGDrivEmouse2_calcExpKernel', PACKAGE = 'MGDrivEmouse2', distMat, rate)
 }
 
 #' Calculate Zero-inflated Exponential Stochastic Matrix
 #'
-#' Given a distance matrix from \code{\link[MGDrivE]{calcVinEll}}, calculate a
+#' Given a distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}, calculate a
 #' stochastic matrix where one step movement probabilities follow an zero-inflated
 #' exponential density with a point mass at zero. The point mass at zero represents
 #' the first stage of a two-stage process, where mosquitoes decide to stay at
 #' their current node or leave anywhere. This parameter can be calculated from
 #' lifetime probabilities to stay at the current node with the helper function
-#' \code{\link[MGDrivE]{calcZeroInflation}}.
+#' \code{\link[MGDrivEmouse2]{calcZeroInflation}}.
 #'
 #' If a mosquito leaves its current node, with probability \eqn{1-p_{0}}, it
 #' then chooses a destination node according to a standard exponential density
@@ -249,7 +249,7 @@ calcExpKernel <- function(distMat, rate) {
 #' \eqn{\theta(x)} is the Heaviside step function and \eqn{\delta(x)} is the
 #' Dirac delta function.
 #'
-#' @param distMat Distance matrix from \code{\link[MGDrivE]{calcVinEll}}
+#' @param distMat Distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}
 #' @param rate Rate parameter of \code{\link[stats]{Exponential}} distribution
 #' @param p0 Point mass at zero
 #'
@@ -268,6 +268,6 @@ calcExpKernel <- function(distMat, rate) {
 #'
 #' @export
 calcHurdleExpKernel <- function(distMat, rate, p0) {
-    .Call('_MGDrivE_calcHurdleExpKernel', PACKAGE = 'MGDrivE', distMat, rate, p0)
+    .Call('_MGDrivEmouse2_calcHurdleExpKernel', PACKAGE = 'MGDrivEmouse2', distMat, rate, p0)
 }
 

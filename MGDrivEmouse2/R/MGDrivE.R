@@ -1,7 +1,7 @@
 #' @import Rcpp
 #' @importFrom Rdpack reprompt
 #' @importFrom R6 R6Class
-#' @useDynLib MGDrivE
+#' @useDynLib MGDrivEmouse2
 NULL
 
 #' MGDrivE: Mosquito Gene Drive Explorer
@@ -44,9 +44,9 @@ NULL
 #'
 #' @section Previous Work:
 #'
-#' The original version of this model was based on work by \insertCite{Deredec2011,Hancock2007}{MGDrivE}
+#' The original version of this model was based on work by \insertCite{Deredec2011,Hancock2007}{MGDrivEmouse2}
 #' and adapted to accommodate CRISPR homing dynamics in a previous publication
-#' by our team \insertCite{JohnMarshallAnnaBuchmanHectorMSanchezC.2017}{MGDrivE}.
+#' by our team \insertCite{JohnMarshallAnnaBuchmanHectorMSanchezC.2017}{MGDrivEmouse2}.
 #' As it was described, we extended this framework to be able to handle a variable
 #' number of genotypes, and migration across spatial scenarios. We accomplish this
 #' by adapting the equations to work in a tensor-oriented manner, where each
@@ -85,9 +85,9 @@ NULL
 
 #' MGDrivE: Model's Mathematical Description
 #'
-#' The original version of this model was based on work by \insertCite{Deredec2011,Hancock2007}{MGDrivE}
+#' The original version of this model was based on work by \insertCite{Deredec2011,Hancock2007}{MGDrivEmouse2}
 #' and adapted to accommodate CRISPR homing dynamics in a previous publication by
-#' our team \insertCite{JohnMarshallAnnaBuchmanHectorMSanchezC.2017}{MGDrivE}. As
+#' our team \insertCite{JohnMarshallAnnaBuchmanHectorMSanchezC.2017}{MGDrivEmouse2}. As
 #' it was described, we extended this framework to be able to handle a variable
 #' number of genotypes, and migration across spatial scenarios. We did this by
 #' adapting the equations to work in a tensor-oriented manner, where each genotype
@@ -267,7 +267,7 @@ NULL
 #'  * Network: Related to migration between nodes of population units
 #'
 #' @section Stochasticity:
-#' \emph{MGDrivE} allows stochasticity to be included in the dynamics of various
+#' \emph{MGDrivEmouse2} allows stochasticity to be included in the dynamics of various
 #' processes; in an effort to simulate processes that affect various stages of
 #' mosquitoes lives. In the next section, we will describe all the stochastic
 #' processes that can be activated in the program. It should be noted that all
