@@ -5,6 +5,13 @@ save.image()  # overwrites .RData with empty workspace
 # Install from local folder (path to the repo)
 # devtools::install("~/Documents/GitHub/MouseGD/MGDrivEmouse2")
 
+remove.packages("MGDrivEmouse2")
+pkgbuild::clean_dll("~/Documents/GitHub/MouseGD/MGDrivEmouse2")
+rm -rf /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/MGDrivEmouse2
+
+devtools::document("~/Documents/GitHub/MouseGD/MGDrivEmouse2")
+devtools::install("~/Documents/GitHub/MouseGD/MGDrivEmouse2", clean = TRUE)
+
 # Then load it
 library(MGDrivEmouse2)
 library(BBmisc)
@@ -234,50 +241,50 @@ for(i in 1:nRep){
 # plot output of first run to see effect
 plotMGDrivESingle(readDir=folderNames[1],totalPop = TRUE,lwd=3.5,alpha=1)
 
-# plot all repetitions together
-png(paste(outFolder, ".png", sep = ""), width = 1000, height = 750)
-plotMGDrivEMult(readDir=outFolder,lwd=0.35,alpha=0.75)
-dev.off()
-
-out_path = as.character(paste(getwd(),outFolder, sep = "/"))
-
-
-timeSeq = seq(2365,tMax, by = 365) # select time points each year, assuming no leap years, starting
-# 5 years after initial genedrive/pesticide deployment
-
-ext_table = MGDcpt(tPoints = timeSeq) # returns [[1]] a dataframe for the percent of simulations
-# where each genotype (and the total population) reached zero
-# and [[2]] a list of data frames for the total abundance and
-# genotype abundances for each simulation (1 frame per simulation)
-
-ext_table[[1]] # percent of simulations that went to zero (for conditional probability table in Bayes Net)
-
-write.csv(x = ext_table[[1]], file = paste(outFolder, "_zeroProbs", ".csv", sep = "")) #write to csv
-
-totCol = ncol(ext_table[[1]]) # column number corresponding to the total population of mice (not genotype-specific)
-
-zero = ext_table[[1]][,totCol]
-names(zero) = NULL
-
-sparse = (abs((Reduce(`+`, lapply(ext_table[[2]], `>`, 0))/length(ext_table[[2]])*100)
-              - (Reduce(`+`, lapply(ext_table[[2]], `>`, 1000))/length(ext_table[[2]])*100)))[,totCol]
-names(sparse) = NULL
-
-low = (abs((Reduce(`+`, lapply(ext_table[[2]], `>`, 1000))/length(ext_table[[2]])*100)
-           - (Reduce(`+`, lapply(ext_table[[2]], `>`, 10000))/length(ext_table[[2]])*100)))[,totCol]
-names(low) = NULL
-
-med = (abs((Reduce(`+`, lapply(ext_table[[2]], `>`, 10000))/length(ext_table[[2]])*100)
-           - (Reduce(`+`, lapply(ext_table[[2]], `>`, 25000))/length(ext_table[[2]])*100)))[,totCol]
-names(med) = NULL
-
-high = (Reduce(`+`, lapply(ext_table[[2]], `>`, 25000))/length(ext_table[[2]])*100)[,totCol]
-names(high) = NULL
-
-# create table of population probability distribution (rows = year; columns = percent of simulations
-# within population threshold)
-totDistribution = data.frame(zero, sparse, low, med, high)
-
-# write to csv (use this file as part of the conditional probability table in the Bayesian network)
-write.csv(x = totDistribution, file = paste(outFolder, "_popDist", ".csv", sep = ""))
-
+# # plot all repetitions together
+# png(paste(outFolder, ".png", sep = ""), width = 1000, height = 750)
+# plotMGDrivEMult(readDir=outFolder,lwd=0.35,alpha=0.75)
+# dev.off()
+# 
+# out_path = as.character(paste(getwd(),outFolder, sep = "/"))
+# 
+# 
+# timeSeq = seq(2365,tMax, by = 365) # select time points each year, assuming no leap years, starting
+# # 5 years after initial genedrive/pesticide deployment
+# 
+# ext_table = MGDcpt(tPoints = timeSeq) # returns [[1]] a dataframe for the percent of simulations
+# # where each genotype (and the total population) reached zero
+# # and [[2]] a list of data frames for the total abundance and
+# # genotype abundances for each simulation (1 frame per simulation)
+# 
+# ext_table[[1]] # percent of simulations that went to zero (for conditional probability table in Bayes Net)
+# 
+# write.csv(x = ext_table[[1]], file = paste(outFolder, "_zeroProbs", ".csv", sep = "")) #write to csv
+# 
+# totCol = ncol(ext_table[[1]]) # column number corresponding to the total population of mice (not genotype-specific)
+# 
+# zero = ext_table[[1]][,totCol]
+# names(zero) = NULL
+# 
+# sparse = (abs((Reduce(`+`, lapply(ext_table[[2]], `>`, 0))/length(ext_table[[2]])*100)
+#               - (Reduce(`+`, lapply(ext_table[[2]], `>`, 1000))/length(ext_table[[2]])*100)))[,totCol]
+# names(sparse) = NULL
+# 
+# low = (abs((Reduce(`+`, lapply(ext_table[[2]], `>`, 1000))/length(ext_table[[2]])*100)
+#            - (Reduce(`+`, lapply(ext_table[[2]], `>`, 10000))/length(ext_table[[2]])*100)))[,totCol]
+# names(low) = NULL
+# 
+# med = (abs((Reduce(`+`, lapply(ext_table[[2]], `>`, 10000))/length(ext_table[[2]])*100)
+#            - (Reduce(`+`, lapply(ext_table[[2]], `>`, 25000))/length(ext_table[[2]])*100)))[,totCol]
+# names(med) = NULL
+# 
+# high = (Reduce(`+`, lapply(ext_table[[2]], `>`, 25000))/length(ext_table[[2]])*100)[,totCol]
+# names(high) = NULL
+# 
+# # create table of population probability distribution (rows = year; columns = percent of simulations
+# # within population threshold)
+# totDistribution = data.frame(zero, sparse, low, med, high)
+# 
+# # write to csv (use this file as part of the conditional probability table in the Bayesian network)
+# write.csv(x = totDistribution, file = paste(outFolder, "_popDist", ".csv", sep = ""))
+# 
