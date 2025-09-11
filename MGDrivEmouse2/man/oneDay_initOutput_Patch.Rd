@@ -7,5 +7,5 @@
 oneDay_initOutput_Patch()
 }
 \description{
-Initialize Output from Focal Patch
+Writes output to the text connections specified in the enclosing \code{\link{Network}}.
 }

@@ -1,17 +1,19 @@
 rm(list = ls())
 gc()
 save.image()  # overwrites .RData with empty workspace
-
-
+# 
+# 
+# setwd("~/Documents/GitHub/MouseGD/MGDrivEmouse2")
+# pkg <- "MGDrivEmouse2"
 # remove.packages("MGDrivEmouse2")
-## Remove from all libraries on your machine
+# # Remove from all libraries on your machine
 # for (lib in .libPaths()) {
 #   if (pkg %in% rownames(installed.packages(lib = lib))) {
 #     message("Removing from: ", lib)
 #     try(remove.packages(pkg, lib = lib), silent = TRUE)
 #   }
 # }
-
+# 
 # pkgbuild::clean_dll("~/Documents/GitHub/MouseGD/MGDrivEmouse2")
 # system("rm -rf /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/MGDrivEmouse2/R/MGDrivEmouse2.rdb")
 # system("rm -rf /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/MGDrivEmouse2")

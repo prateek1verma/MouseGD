@@ -2,16 +2,37 @@
 % Please edit documentation in R/Patch-Methods.R
 \name{set_population_deterministic_Patch}
 \alias{set_population_deterministic_Patch}
-\title{Set Initial Population (Deterministic)}
+\title{Set Initial Population Deterministic}
 \usage{
 set_population_deterministic_Patch(
   k = k,
   adultRatioF = adultRatioF,
   adultRatioM = adultRatioM,
-  use_eta_at_t0 = FALSE,
-  ...
+  muAI = muAI,
+  muJI = muJI,
+  muN = muN,
+  muG = muG,
+  timeAd = timeAd
 )
 }
+\arguments{
+\item{k}{Carrying capacity constant}
+
+\item{adultRatioF}{Genotype specific ratio for adult females}
+
+\item{adultRatioM}{Genotype specific ratio for adult males}
+
+\item{muAI}{daily survival of adult stage}
+
+\item{muJI}{juvenile infection mortality parameter}
+
+\item{muN}{nursing mortality parameter}
+
+\item{muG}{gestation mortality parameter}
+
+\item{timeAd}{approximate length of adult life stage}
+}
 \description{
-Set Initial Population (Deterministic)
+Calls \code{\link{set_initialPopulation_Patch}} to initialize a steady-state
+population distribution.
 }

@@ -3,293 +3,241 @@
 #       / __ \____ _/ /______/ /_
 #      / /_/ / __ `/ __/ ___/ __ \
 #     / ____/ /_/ / /_/ /__/ / / /
-#    /_/    \__,_/\__/\___/_/ /_/
+#    /_/    \__,_/\__/\___/_/ /_/#
 #
-#   Patch Class Implementation (Rewritten)
+#   Patch Class Implementation
 #   Original Code by: Marshall Lab
 #   jared_bennett@berkeley.edu
 #   December 2019
-#
-#   Rewritten by: ChatGPT (MouseGD equilibrium-friendly init)
-#   Notes:
-#     * Keeps external interface compatible with prior code: initialPopulation,
-#       set_population_*_Patch, reset_Patch, init/write output.
-#     * Adds equilibrium seeding of juvenile pipeline (gestation/nursing/adolescence)
-#       with optional density-independent juvenile mortalities.
-#     * Balances adult emergence (t+1) to expected adult deaths (t) given the
-#       current adult state, K, theta, omega, muAd, and (optionally) toxicant.
-#     * Uses NetworkPointer getters for timeJu & parameters; avoids try(get(...)).
-#     * Fixes duplicate popFemale reset; rounds only in stochastic init.
+#   MODIFIED BY: ETHAN A. BROWN (JUL 9 2020)
+#   ebrown23@nd.edu
 ###############################################################################
 
-# ---------- Utilities ---------------------------------------------------------
-
-# defensive normalizer (should already exist in codebase)
-normalise <- function(x){
-  s <- sum(x)
-  if(s > 0){ x / s } else { x }
-}
-
-# clip helper
-.clip_nonneg <- function(x){ ifelse(is.finite(x) & x >= 0, x, 0) }
-
-# ---------- Initial Population -----------------------------------------------
-
-#' Set Initial Population (adults + female mating matrix; juveniles seeded later)
+#' Set Initial Population
 #'
-#' @param k Carrying capacity constant (expected adults at equilibrium ~ K)
-#' @param adultRatioF Named vector: genotype-specific ratio for adult females
-#' @param adultRatioM Named vector: genotype-specific ratio for adult males
-#' @param use_eta_at_t0 logical; if TRUE, use genotype-specific male mating
-#'        fitness (eta) when building popFemale at t0; otherwise proportional to
-#'        male abundance only (backwards compatible). Default FALSE.
+#' This hidden function distributes the population at time 0 in the steady-state
+#' conformation. This involves splitting adults into male and female.
 #'
-set_initialPopulation_Patch <- function(k = k, adultRatioF = adultRatioF, adultRatioM = adultRatioM, 
-                                        use_eta_at_t0 = FALSE, ...){
+#' @param k Carrying capacity constant
+#' @param adultRatioF Genotype specific ratio for adult females
+#' @param adultRatioM Genotype specific ratio for adult males
+#' @param muAI daily survival of adult stage
+#' @param muJI juvenile infection mortality parameter
+#' @param muN nursing mortality parameter
+#' @param muG gestation mortality parameter
+#' @param timeAd approximate length of adult life stage
+#'
+
+set_initialPopulation_Patch <- function(k = k, adultRatioF = adultRatioF, adultRatioM = adultRatioM,
+                                        muAI = muAI, muJI = muJI, muN = muN, muG = muG, timeAd = timeAd){
   
-  # ---- normalize ratio vectors to be safe ----
-  if(sum(adultRatioM) <= 0) stop("adultRatioM must sum to > 0")
-  if(sum(adultRatioF) <= 0) stop("adultRatioF must sum to > 0")
-  adultRatioM <- adultRatioM / sum(adultRatioM)
-  adultRatioF <- adultRatioF / sum(adultRatioF)
   
-  # ---- set adult population breakdown (K/2 per sex) ----
-  private$popMale[names(adultRatioM)]    <- adultRatioM * (k/2)
-  private$popUnmated[names(adultRatioF)] <- adultRatioF * (k/2)
+  ##########
+  # set male population breakdown
+  ##########
+  private$popMale[names(adultRatioM)] = adultRatioM * k/2
   
-  # ---- build female mating matrix popFemale (rows=female genos, cols=male genos) ----
-  if(sum(private$popMale) > 0){
-    if(isTRUE(use_eta_at_t0)){
-      # include eta per female genotype
-      nG <- private$NetworkPointer$get_genotypesN()
-      pf <- matrix(0, nrow = nG, ncol = nG)
-      for(i in 1:nG){
-        maleProb_i <- normalise(private$popMale * private$NetworkPointer$get_eta(i))
-        pf[i, ] <- private$popUnmated[i] * maleProb_i
+  ##########
+  # set mated female population breakdown
+  ##########
+  # this isn't exactly correct, it mates all males to all females, ignoring
+  # the genotype-specific male mating abilities
+  private$popUnmated[names(adultRatioF)] = adultRatioF * k/2
+  private$popFemale = private$popUnmated %o% normalise(private$popMale)
+  
+  ##########
+  # set juvenile population breakdown
+  ##########
+  B <- muAI * k
+  
+  timeJu <- try(get("timeJu", inherits = TRUE), silent = TRUE)
+  if(inherits(timeJu, "try-error")){
+    timeJu <- c("G" = 0L, "N" = 0L, "A" = 0L)
+  }
+  
+  tG <- as.integer(timeJu["G"])
+  tN <- as.integer(timeJu["N"])
+  tA <- as.integer(timeJu["A"])
+  
+  survA <- 1 - muJI
+  survN <- 1 - muN
+  survG <- 1 - muG
+  
+  nCols <- ncol(private$popJuvenile)
+  aStart <- tG + tN + 1L
+  aEnd <- tG + tN + tA
+  nStart <- tG + 1L
+  nEnd <- tG + tN
+  
+  for(g in names(private$popMale)){
+    Bg <- B * (adultRatioF[g] + adultRatioM[g]) / 2
+    pop_vec <- numeric(nCols)
+    
+    # adolescent stage
+    if(tA > 0){
+      pop_vec[aEnd] <- Bg / survA
+      if(tA > 1){
+        for(i in (aEnd-1L):aStart){
+          pop_vec[i] <- pop_vec[i+1L] / survA
+        }
       }
-      private$popFemale[] <- pf
-    } else {
-      # proportional to male abundance (legacy behavior)
-      private$popFemale[] <- private$popUnmated %o% normalise(private$popMale)
     }
-  } else {
-    private$popFemale[] <- 0
+    
+    # nursing stage
+    if(tN > 0){
+      pop_vec[nEnd] <- pop_vec[aStart] / survN
+      if(tN > 1){
+        for(i in (nEnd-1L):nStart){
+          pop_vec[i] <- pop_vec[i+1L] / survN
+        }
+      }
+    }
+    
+    # gestation stage
+    if(tG > 0){
+      pop_vec[tG] <- pop_vec[nStart] / survG
+      if(tG > 1){
+        for(i in (tG-1L):1L){
+          pop_vec[i] <- pop_vec[i+1L] / survG
+        }
+      }
+    }
+    
+    private$popJuvenile[g, ] <- pop_vec
   }
+  
+  private$popJuvenilet0 = private$popJuvenile
+  
+  
 }
 
-# ---------- Juvenile Equilibrium Seeding -------------------------------------
-
-#' Seed Juveniles to Equilibrium (fills gestation, nursing, adolescence)
+#' Set Initial Population Deterministic
 #'
-#' Uses current adults to compute expected daily offspring by offspring genotype
-#' (deterministic expectation), optionally scaled so that expected adult
-#' emergence tomorrow matches expected adult deaths today. Fills the juvenile
-#' pipeline forward using geometric survival within each stage.
+#' Calls \code{\link{set_initialPopulation_Patch}} to initialize a steady-state
+#' population distribution.
 #'
-seed_juveniles_equilibrium_Patch <- function(){
-  nG <- private$NetworkPointer$get_genotypesN()
+#' @param k Carrying capacity constant
+#' @param adultRatioF Genotype specific ratio for adult females
+#' @param adultRatioM Genotype specific ratio for adult males
+#' @param muAI daily survival of adult stage
+#' @param muJI juvenile infection mortality parameter
+#' @param muN nursing mortality parameter
+#' @param muG gestation mortality parameter
+#' @param timeAd approximate length of adult life stage
+#'
+set_population_deterministic_Patch <- function(k = k, adultRatioF = adultRatioF, adultRatioM = adultRatioM,
+                                               muAI = muAI, muJI = muJI, muN = muN, muG = muG, timeAd = timeAd){
   
-  # ----- Stage lengths -----
-  tG <- private$NetworkPointer$get_timeJu(stage = 'G')
-  tN <- private$NetworkPointer$get_timeJu(stage = 'N')
-  tTot <- private$NetworkPointer$get_timeJu()         # total columns
-  tA <- tTot - (tG + tN)
-  if(tA < 0) stop("Inconsistent juvenile times: A < 0")
+  self$initialPopulation(k = k, adultRatioF = adultRatioF, adultRatioM = adultRatioM,
+                         muAI = muAI, muJI = muJI, muN = muN, muG = muG, timeAd = timeAd)
   
-  # ----- Juvenile (density-independent) survival per day -----
-  # These getters must exist in your backend; otherwise set to 1 for no mortality.
-  sG <- 1 - private$NetworkPointer$get_muG()   # gestation DI mortality
-  sN <- 1 - private$NetworkPointer$get_muN()   # nursing DI mortality
-  sA <- 1 - private$NetworkPointer$get_muJI()  # adolescence DI mortality
-  
-  # ----- Adult survival today (as in oneDay_adultDeath_*_Patch) -----
-  muAd  <- private$NetworkPointer$get_muAd()
-  omega <- private$NetworkPointer$get_omega()     # vector length nG
-  K     <- private$NetworkPointer$get_k(ix = private$patchID)
-  theta <- private$NetworkPointer$get_theta()
-  
-  A_m <- sum(private$popMale)
-  A_f <- sum(private$popUnmated)
-  density <- ((K/2) / (K + A_m + A_f))^(1/theta)
-  
-  # base adult daily survival per genotype (both sexes share same formula in code)
-  pSurv_g <- omega * ((1 - muAd) * density)
-  
-  # include toxicant window if active at t0
-  tNow <- private$NetworkPointer$get_tNow()
-  interval <- sort(private$NetworkPointer$get_toxInt())
-  dayToxSurv <- 1 - private$NetworkPointer$get_toxMort()
-  if(length(interval) == 2 && is.finite(dayToxSurv) && dayToxSurv < 1 &&
-     tNow >= interval[1] && tNow <= interval[2]){
-    pSurv_g <- pSurv_g * dayToxSurv
-  }
-  
-  # expected adult deaths today
-  expDeaths <- sum(private$popMale    * (1 - pSurv_g)) +
-    sum(private$popUnmated * (1 - pSurv_g))
-  expDeaths <- max(expDeaths, 0)
-  
-  # ----- Expected births by offspring genotype (deterministic expectation) -----
-  lits <- private$NetworkPointer$get_litters()   # litters per year
-  beta <- private$NetworkPointer$get_beta()
-  sFec <- private$NetworkPointer$get_s()
-  
-  # expected mated females by genotype (same simplification as t0 female matrix)
-  matedFem_i <- private$popUnmated * (lits/365)
-  maleProb <- if(sum(private$popMale) > 0) normalise(private$popMale) else rep(0, nG)
-  popMatches_exp <- matrix(0, nrow = nG, ncol = nG)
-  for(i in 1:nG){
-    popMatches_exp[i, ] <- matedFem_i[i] * maleProb
-  }
-  
-  matingFemBetaS <- popMatches_exp * (beta * sFec)
-  
-  births_vec <- numeric(nG)
-  for (g in 1:nG){
-    births_vec[g] <- sum(
-      matingFemBetaS *
-        private$NetworkPointer$get_drivecubeindex(NULL, NULL, g) *
-        private$NetworkPointer$get_tau(NULL, NULL, g)
-    )
-  }
-  
-  # ----- Scale births so E[emergence tomorrow] = E[deaths today] -----
-  phi <- private$NetworkPointer$get_phi()
-  xiM <- private$NetworkPointer$get_xiM()
-  xiF <- private$NetworkPointer$get_xiF()
-  
-  emerg_factor <- (sG^tG) * (sN^tN) * (sA^tA) * (1 - muAd) * ((1 - phi) * xiM + phi * xiF)
-  denom <- sum(births_vec * emerg_factor)
-  alpha <- if (denom > 0) expDeaths / denom else 0
-  alpha <- .clip_nonneg(alpha)
-  
-  births_vec <- alpha * births_vec
-  
-  # ----- Fill juvenile pipeline forward with geometric survival -----
-  private$popJuvenile[,] <- 0
-  # gestation columns 1..tG
-  if (tG > 0) {
-    for (j in 1:tG) {
-      private$popJuvenile[, j] <- births_vec * (sG^(j-1))
-    }
-  }
-  # nursing columns tG+1..tG+tN
-  if (tN > 0) {
-    for (j in 1:tN) {
-      private$popJuvenile[, tG + j] <- births_vec * (sG^tG) * (sN^(j-1))
-    }
-  }
-  # adolescence columns tG+tN+1..tTot
-  if (tA > 0) {
-    for (j in 1:tA) {
-      private$popJuvenile[, tG + tN + j] <- births_vec * (sG^tG) * (sN^tN) * (sA^(j-1))
-    }
-  }
-  
-  # save t0 copy
-  private$popJuvenilet0[] <- private$popJuvenile
 }
 
-# ---------- Public Init Wrappers ---------------------------------------------
-
-#' Set Initial Population (Deterministic)
-set_population_deterministic_Patch <- function(k = k,
-                                               adultRatioF = adultRatioF,
-                                               adultRatioM = adultRatioM,
-                                               use_eta_at_t0 = FALSE, ...){
-  self$initialPopulation(k = k,
-                         adultRatioF = adultRatioF,
-                         adultRatioM = adultRatioM,
-                         use_eta_at_t0 = use_eta_at_t0, ...)
+#' Set Initial Population Stochastic
+#'
+#' Calls \code{\link{set_initialPopulation_Patch}} to initialize a steady-state
+#' population distribution. Populations are then rounded to integer values.
+#'
+#' @param k Carrying capacity constant
+#' @param adultRatioF Genotype specific ratio for adult females
+#' @param adultRatioM Genotype specific ratio for adult males
+#' @param muAI daily survival of adult stage
+#' @param muJI juvenile infection mortality parameter
+#' @param muN nursing mortality parameter
+#' @param muG gestation mortality parameter
+#' @param timeAd approximate length of adult life stage
+#'
+set_population_stochastic_Patch <- function(k = k, adultRatioF = adultRatioF, adultRatioM = adultRatioM,
+                                            muAI = muAI, muJI = muJI, muN = muN, muG = muG, timeAd = timeAd){
   
-  # equilibrium seed juveniles
-  self$seedJuvenilesEquilibrium()
-}
-
-#' Set Initial Population (Stochastic)
-set_population_stochastic_Patch <- function(k = k,
-                                            adultRatioF = adultRatioF,
-                                            adultRatioM = adultRatioM,
-                                            use_eta_at_t0 = FALSE, ...){
-  # set initial adults & female matrix
-  self$initialPopulation(k = k,
-                         adultRatioF = adultRatioF,
-                         adultRatioM = adultRatioM,
-                         use_eta_at_t0 = use_eta_at_t0, ...)
+  # set initial population
+  self$initialPopulation(k = k, adultRatioF = adultRatioF, adultRatioM = adultRatioM,
+                         muAI = muAI, muJI = muJI, muN = muN, muG = muG, timeAd = timeAd)
   
-  # seed juveniles using expectation, then round to integers
-  self$seedJuvenilesEquilibrium()
-  
+  ##########
+  # make everything an integer
+  ##########
   private$popJuvenile[] <- round(private$popJuvenile)
-  private$popUnmated[]  <- round(private$popUnmated)
-  private$popMale[]     <- round(private$popMale)
-  private$popFemale[]   <- round(private$popFemale)
+  private$popUnmated[] <- round(private$popUnmated)
+  private$popMale[] <- round(private$popMale)
+  private$popFemale[] <- round(private$popFemale)
+  
 }
-
-# ---------- Reset -------------------------------------------------------------
 
 #' Reset Patch to Initial Conditions
 #'
-#' Restores t0 state and reloads scheduled releases.
+#' Resets a patch to its initial configuration so that a new one does not have
+#' to be created and allocated in the network (for Monte Carlo simulation).
+#'
+#' @param verbose Chatty? Default is TRUE
+#'
 reset_Patch <- function(verbose = TRUE){
-  if(verbose){cat("reset patch ", private$patchID, "\n", sep = "")}
+  
+  if(verbose){cat("reset patch ",private$patchID,"\n",sep="")}
   
   # reset population
-  private$popJuvenile[] <- private$popJuvenilet0
-  private$popMale[]     <- private$popMalet0
-  private$popUnmated[]  <- private$popUnmatedt0
-  private$popFemale[]   <- private$popFemalet0
+  private$popJuvenile[] = private$popJuvenilet0
+  private$popMale[] = private$popMalet0
+  private$popUnmated[] = private$popUnmatedt0
+  private$popFemale[] = private$popFemalet0
+  private$popFemale[] = private$popFemalet0
   
-  # Reset Releases
-  private$gestReleases        <- private$NetworkPointer$get_patchReleases(private$patchID, "Gest")
-  private$maleReleases        <- private$NetworkPointer$get_patchReleases(private$patchID, "M")
-  private$femaleReleases      <- private$NetworkPointer$get_patchReleases(private$patchID, "F")
-  private$matedFemaleReleases <- private$NetworkPointer$get_patchReleases(private$patchID, "mF")
+  
+  # Reset Mosquito Releases
+  private$gestReleases = private$NetworkPointer$get_patchReleases(private$patchID,"Gest")
+  private$maleReleases = private$NetworkPointer$get_patchReleases(private$patchID,"M")
+  private$femaleReleases = private$NetworkPointer$get_patchReleases(private$patchID,"F")
+  private$matedFemaleReleases = private$NetworkPointer$get_patchReleases(private$patchID,"mF")
+  
 }
-
-# ---------- Output ------------------------------------------------------------
 
 #' Initialize Output from Focal Patch
+#'
+#' Writes output to the text connections specified in the enclosing \code{\link{Network}}.
+#'
 oneDay_initOutput_Patch <- function(){
-  # headers (once, from patch 1)
+  
+  ##########
+  # headers
+  ##########
   if(private$patchID == 1){
-    # males header
-    writeLines(text = paste0(c("Time","Patch", private$NetworkPointer$get_genotypesID()), collapse = ","),
+    # males
+    writeLines(text = paste0(c("Time","Patch",private$NetworkPointer$get_genotypesID()), collapse = ","),
                con = private$NetworkPointer$get_conADM(), sep = "\n")
-    
-    # females header (female x male crosses)
-    femaleCrosses <- c(t(outer(private$NetworkPointer$get_genotypesID(),
-                               private$NetworkPointer$get_genotypesID(),
-                               FUN = paste0)))
-    writeLines(text = paste0(c("Time","Patch", femaleCrosses), collapse = ","),
-               con = private$NetworkPointer$get_conADF(), sep = "\n")
+    # females
+    femaleCrosses = c(t(outer(private$NetworkPointer$get_genotypesID(),private$NetworkPointer$get_genotypesID(),FUN = paste0)))
+    writeLines(text = paste0(c("Time","Patch",femaleCrosses), collapse = ","),
+               con = private$NetworkPointer$get_conADF(),sep = "\n")
   }
   
-  # write t=1 snapshot
-  writeLines(text = paste0(c(1, private$patchID, private$popMale), collapse = ","),
+  ##########
+  # males
+  ##########
+  writeLines(text = paste0(c(1,private$patchID,private$popMale),collapse = ","),
              con = private$NetworkPointer$get_conADM(), sep = "\n")
   
-  writeLines(text = paste0(c(1, private$patchID, c(t(private$popFemale))), collapse = ","),
-             con = private$NetworkPointer$get_conADF(), sep = "\n")
-}
-
-#' Write Output from Focal Patch (each day)
-oneDay_writeOutput_Patch <- function(){
-  tNow <- private$NetworkPointer$get_tNow()
-  
-  # males
-  ADMout <- paste0(c(tNow, private$patchID, private$popMale), collapse = ",")
-  writeLines(text = ADMout, con = private$NetworkPointer$get_conADM(), sep = "\n")
-  
+  ##########
   # females
-  ADFout <- paste0(c(tNow, private$patchID, c(t(private$popFemale))), collapse = ",")
-  writeLines(text = ADFout, con = private$NetworkPointer$get_conADF(), sep = "\n")
+  ##########
+  writeLines(text = paste0(c(1,private$patchID,c(t(private$popFemale))),collapse = ","),
+             con = private$NetworkPointer$get_conADF(), sep = "\n")
+  
 }
 
-# ---------- Public Facade Methods (bind to private impl) ----------------------
-
-# These are convenience aliases you can add in the R6 class definition to
-# expose the rewritten helpers with your preferred names, e.g.:
-#   seedJuvenilesEquilibrium = function() private$seed_juveniles_equilibrium_Patch()
-#   initialPopulation        = function(...) private$set_initialPopulation_Patch(...)
-# Make sure to wire them in your class constructor.
+#' Write Output from Focal Patch
+#'
+#' Writes output to the text connections specified in the enclosing \code{\link{Network}}.
+#'
+oneDay_writeOutput_Patch <- function(){
+  
+  tNow = private$NetworkPointer$get_tNow()
+  
+  # write males
+  ADMout = paste0(c(tNow,private$patchID,private$popMale),collapse = ",")
+  writeLines(text = ADMout,con = private$NetworkPointer$get_conADM(),sep = "\n")
+  
+  # write females
+  ADFout = paste0(c(tNow,private$patchID,c(t(private$popFemale))),collapse = ",")
+  writeLines(text = ADFout,con = private$NetworkPointer$get_conADF(),sep = "\n")
+  
+}
