@@ -7,12 +7,12 @@
 calcExpKernel(distMat, rate)
 }
 \arguments{
-\item{distMat}{Distance matrix from \code{\link[MGDrivE]{calcVinEll}}}
+\item{distMat}{Distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}}
 
 \item{rate}{Rate parameter of \code{\link[stats]{Exponential}} distribution}
 }
 \description{
-Given a distance matrix from \code{\link[MGDrivE]{calcVinEll}}, calculate a
+Given a distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}, calculate a
 stochastic matrix where one step movement probabilities follow an exponential density.
 }
 \details{

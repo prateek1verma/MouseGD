@@ -8,8 +8,8 @@ oneDay_adultDeath_stochastic_Patch()
 }
 \description{
 Daily adult survival is sampled from a binomial distribution where survival
-probability is given by \deqn{1-{\mu_{ad}} * \overline{\omega_m/f}}.
-\eqn{\mu_{ad}} corresponds to adult mortality rate and \eqn{\overline{\omega_m/f}}
+probability is given by \deqn{1-{\mu_{AI}} * \overline{\omega_m/f}}.
+\eqn{\mu_{AI}} corresponds to adult mortality rate and \eqn{\overline{\omega_m/f}}
 corresponds to genotype-specific mortality effects.
 }
 \details{

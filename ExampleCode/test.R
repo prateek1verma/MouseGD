@@ -2,16 +2,23 @@ rm(list = ls())
 gc()
 save.image()  # overwrites .RData with empty workspace
 
-# Install from local folder (path to the repo)
-# devtools::install("~/Documents/GitHub/MouseGD/MGDrivEmouse2")
 
 # remove.packages("MGDrivEmouse2")
+## Remove from all libraries on your machine
+# for (lib in .libPaths()) {
+#   if (pkg %in% rownames(installed.packages(lib = lib))) {
+#     message("Removing from: ", lib)
+#     try(remove.packages(pkg, lib = lib), silent = TRUE)
+#   }
+# }
+
 # pkgbuild::clean_dll("~/Documents/GitHub/MouseGD/MGDrivEmouse2")
 # system("rm -rf /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/MGDrivEmouse2/R/MGDrivEmouse2.rdb")
 # system("rm -rf /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/MGDrivEmouse2")
 # 
-# # devtools::document("~/Documents/GitHub/MouseGD/MGDrivEmouse2")
-# devtools::install("~/Documents/GitHub/MouseGD/MGDrivEmouse2", clean = TRUE)
+# setwd("~/Documents/GitHub/MouseGD/MGDrivEmouse2")
+# devtools::document("~/Documents/GitHub/MouseGD/MGDrivEmouse2")
+# devtools::install("~/Documents/GitHub/MouseGD/MGDrivEmouse2")
 
 # Then load it
 library(MGDrivEmouse2)
@@ -69,9 +76,9 @@ bioParameters <- list(betaK  = 6,
                       tAdo = 37,
                       muAd = 1/690,
                       muAI = 1/690,
-                      muJI = 0.00, # Assuming 85% survival over 37 days
-                      muN  = 0.00, # Assuming 75% survival over 23 days
-                      muG  = 0.00, # Assuming 95% survival over 19 days
+                      muJI = 0.001, # Assuming 85% survival over 37 days
+                      muN  = 0.001, # Assuming 75% survival over 23 days
+                      muG  = 0.001, # Assuming 95% survival over 19 days
                       theta = 22.4)
 
 sitesNumber <- 2 # number of patches

@@ -7,14 +7,14 @@
 calcGammaKernel(distMat, shape, rate)
 }
 \arguments{
-\item{distMat}{Distance matrix from \code{\link[MGDrivE]{calcVinEll}}}
+\item{distMat}{Distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}}
 
 \item{shape}{Shape parameter of \code{\link[stats]{GammaDist}} distribution}
 
 \item{rate}{Rate parameter of \code{\link[stats]{GammaDist}} distribution}
 }
 \description{
-Given a distance matrix from \code{\link[MGDrivE]{calcVinEll}}, calculate a
+Given a distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}, calculate a
 stochastic matrix where one step movement probabilities follow a gamma density.
 }
 \details{

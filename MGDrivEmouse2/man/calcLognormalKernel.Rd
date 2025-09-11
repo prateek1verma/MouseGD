@@ -7,14 +7,14 @@
 calcLognormalKernel(distMat, meanlog, sdlog)
 }
 \arguments{
-\item{distMat}{Distance matrix from \code{\link[MGDrivE]{calcVinEll}}}
+\item{distMat}{Distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}}
 
 \item{meanlog}{Log mean of \code{\link[stats]{Lognormal}} distribution}
 
 \item{sdlog}{Log standard deviation of \code{\link[stats]{Lognormal}} distribution}
 }
 \description{
-Given a distance matrix from \code{\link[MGDrivE]{calcVinEll}},
+Given a distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}},
 calculate a stochastic matrix where one step movement probabilities follow a lognormal density.
 }
 \details{

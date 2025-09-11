@@ -2,37 +2,16 @@
 % Please edit documentation in R/Patch-Methods.R
 \name{set_population_stochastic_Patch}
 \alias{set_population_stochastic_Patch}
-\title{Set Initial Population Stochastic}
+\title{Set Initial Population (Stochastic)}
 \usage{
 set_population_stochastic_Patch(
   k = k,
   adultRatioF = adultRatioF,
   adultRatioM = adultRatioM,
-  muAI = muAI,
-  muJI = muJI,
-  muN = muN,
-  muG = muG,
-  timeAd = timeAd
+  use_eta_at_t0 = FALSE,
+  ...
 )
 }
-\arguments{
-\item{k}{Carrying capacity constant}
-
-\item{adultRatioF}{Genotype specific ratio for adult females}
-
-\item{adultRatioM}{Genotype specific ratio for adult males}
-
-\item{muAI}{daily survival of adult stage}
-
-\item{muJI}{juvenile infection mortality parameter}
-
-\item{muN}{nursing mortality parameter}
-
-\item{muG}{gestation mortality parameter}
-
-\item{timeAd}{approximate length of adult life stage}
-}
 \description{
-Calls \code{\link{set_initialPopulation_Patch}} to initialize a steady-state
-population distribution. Populations are then rounded to integer values.
+Set Initial Population (Stochastic)
 }

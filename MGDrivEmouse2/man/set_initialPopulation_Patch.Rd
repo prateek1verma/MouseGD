@@ -2,37 +2,27 @@
 % Please edit documentation in R/Patch-Methods.R
 \name{set_initialPopulation_Patch}
 \alias{set_initialPopulation_Patch}
-\title{Set Initial Population}
+\title{Set Initial Population (adults + female mating matrix; juveniles seeded later)}
 \usage{
 set_initialPopulation_Patch(
   k = k,
   adultRatioF = adultRatioF,
   adultRatioM = adultRatioM,
-  muAI = muAI,
-  muJI = muJI,
-  muN = muN,
-  muG = muG,
-  timeAd = timeAd
+  use_eta_at_t0 = FALSE,
+  ...
 )
 }
 \arguments{
-\item{k}{Carrying capacity constant}
+\item{k}{Carrying capacity constant (expected adults at equilibrium ~ K)}
 
-\item{adultRatioF}{Genotype specific ratio for adult females}
+\item{adultRatioF}{Named vector: genotype-specific ratio for adult females}
 
-\item{adultRatioM}{Genotype specific ratio for adult males}
+\item{adultRatioM}{Named vector: genotype-specific ratio for adult males}
 
-\item{muAI}{daily survival of adult stage}
-
-\item{muJI}{juvenile infection mortality parameter}
-
-\item{muN}{nursing mortality parameter}
-
-\item{muG}{gestation mortality parameter}
-
-\item{timeAd}{approximate length of adult life stage}
+\item{use_eta_at_t0}{logical; if TRUE, use genotype-specific male mating
+fitness (eta) when building popFemale at t0; otherwise proportional to
+male abundance only (backwards compatible). Default FALSE.}
 }
 \description{
-This hidden function distributes the population at time 0 in the steady-state
-conformation. This involves splitting adults into male and female.
+Set Initial Population (adults + female mating matrix; juveniles seeded later)
 }

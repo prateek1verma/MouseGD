@@ -2,10 +2,10 @@
 % Please edit documentation in R/Patch-Methods.R
 \name{oneDay_writeOutput_Patch}
 \alias{oneDay_writeOutput_Patch}
-\title{Write Output from Focal Patch}
+\title{Write Output from Focal Patch (each day)}
 \usage{
 oneDay_writeOutput_Patch()
 }
 \description{
-Writes output to the text connections specified in the enclosing \code{\link{Network}}.
+Write Output from Focal Patch (each day)
 }

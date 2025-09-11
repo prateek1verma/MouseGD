@@ -7,8 +7,8 @@
 oneDay_adultDeath_deterministic_Patch()
 }
 \description{
-Daily adult survival is calculated according to \deqn{\overline{\overline{Af_{[t-1]}}} * (1-\mu_{ad}) * \overline{\omega_{m/f}}},
-where \eqn{\mu_{ad}} corresponds to adult mortality rate and \eqn{\overline{\omega_{m/f}}}
+Daily adult survival is calculated according to \deqn{\overline{\overline{Af_{[t-1]}}} * (1-\mu_{AI}) * \overline{\omega_{m/f}}},
+where \eqn{\mu_{AI}} corresponds to adult mortality rate and \eqn{\overline{\omega_{m/f}}}
 corresponds to genotype-specific male/female mortality effects.
 }
 \details{

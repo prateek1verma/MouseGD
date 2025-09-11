@@ -7,20 +7,20 @@
 calcHurdleExpKernel(distMat, rate, p0)
 }
 \arguments{
-\item{distMat}{Distance matrix from \code{\link[MGDrivE]{calcVinEll}}}
+\item{distMat}{Distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}}
 
 \item{rate}{Rate parameter of \code{\link[stats]{Exponential}} distribution}
 
 \item{p0}{Point mass at zero}
 }
 \description{
-Given a distance matrix from \code{\link[MGDrivE]{calcVinEll}}, calculate a
+Given a distance matrix from \code{\link[MGDrivEmouse2]{calcVinEll}}, calculate a
 stochastic matrix where one step movement probabilities follow an zero-inflated
 exponential density with a point mass at zero. The point mass at zero represents
 the first stage of a two-stage process, where mosquitoes decide to stay at
 their current node or leave anywhere. This parameter can be calculated from
 lifetime probabilities to stay at the current node with the helper function
-\code{\link[MGDrivE]{calcZeroInflation}}.
+\code{\link[MGDrivEmouse2]{calcZeroInflation}}.
 }
 \details{
 If a mosquito leaves its current node, with probability \eqn{1-p_{0}}, it

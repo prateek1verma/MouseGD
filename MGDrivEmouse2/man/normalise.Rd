@@ -4,7 +4,7 @@
 \alias{normalise}
 \title{Normalise a Numeric Vector}
 \usage{
-normalise(vector)
+normalise(x)
 }
 \arguments{
 \item{vector}{Numeric vector}
