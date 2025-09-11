@@ -33,7 +33,7 @@ library(BBmisc)
 outFolder <- "outFolder"
 dir.create(path = outFolder)
 
-# Check if the folder exists before deleting
+# # Check if the folder exists before deleting
 # if (dir.exists(outFolder)) {
 #   unlink(outFolder, recursive = TRUE, force = TRUE)
 #   cat("Folder deleted:", outFolder, "\n")
@@ -78,9 +78,9 @@ bioParameters <- list(betaK  = 6,
                       tAdo = 37,
                       muAd = 1/690,
                       muAI = 1/690,
-                      muJI = 0.001, # Assuming 85% survival over 37 days
-                      muN  = 0.001, # Assuming 75% survival over 23 days
-                      muG  = 0.001, # Assuming 95% survival over 19 days
+                      muJI = 0.00, # Assuming 85% survival over 37 days
+                      muN  = 0.00, # Assuming 75% survival over 23 days
+                      muG  = 0.00, # Assuming 95% survival over 19 days
                       theta = 22.4)
 
 sitesNumber <- 2 # number of patches
